@@ -1,13 +1,11 @@
 import express from "express";
 import session from "express-session";
 import passport from "./middleware/passport";
+import cors from "cors";
 const PORT = process.env.PORT || 8085;
 
 const app = express();
-
-app.set("trust proxy", 1);
-app.set("view engine", "ejs");
-app.use(express.static("public"));
+app.use(cors({ credentials: true, origin: 'http://localhost:5173' }));
 app.use(
   session({
     secret: "sawwitSecret",

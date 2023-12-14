@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Container, Burger, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import classes from "./Header.module.css";
-import { Link, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 const links = [
   { link: "/", label: "Home" },
@@ -10,32 +10,30 @@ const links = [
   { link: "/newpost", label: "New Post" },
   { link: "/login", label: "Login" },
   { link: "/logout", label: "Logout" },
-  { link: "/signup", label: "Sign Up" },
+  { link: "/register", label: "Register" },
 ];
 
 export default function Header() {
-  const location = useLocation();
   const [opened, { toggle }] = useDisclosure(true);
-  const [active, setActive] = useState(location.pathname);
 
   const items = links.map((link, index) => (
-    <Link
+    <NavLink
       key={index}
       to={link.link}
-      className={classes.link}
-      data-active={active === link.link || undefined}
-      onClick={() => {
-        setActive(link.link);
-      }}
+      className={({ isActive }: { isActive: boolean }) =>
+        isActive ? `${classes.link} ${classes.active}` : classes.link
+      }
     >
       {link.label}
-    </Link>
+    </NavLink>
   ));
 
   return (
     <header className={classes.header}>
       <Container size="md" className={classes.inner}>
-        <Group><img className={classes.icon} src="./public/sawwit.svg" /> <b>Sawwit</b></Group>
+        <Group>
+          <img className={classes.icon} src="./sawwit.svg" /> <b>Sawwit</b>
+        </Group>
         <Group gap={5} visibleFrom="xs">
           {items}
         </Group>

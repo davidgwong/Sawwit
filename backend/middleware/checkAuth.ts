@@ -10,6 +10,6 @@ function forwardAuthenticated(req: Request, res: Response, next: NextFunction) {
   if (!req.isAuthenticated()) {
     return next();
   }
-  res.redirect("/");
+  res.json("isAuthenticated");
 }
 export { ensureAuthenticated, forwardAuthenticated };

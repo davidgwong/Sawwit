@@ -81,6 +81,13 @@ const comments = {
     description: "The name ..... is the BBQ chicken-agen!",
     timestamp: 1642691742010,
   },
+  9003: {
+    id: 9003,
+    post_id: 103,
+    creator: 2,
+    description: "Hahaha funny name! 😆",
+    timestamp: 1642691942010,
+  },
 };
 
 const votes = [

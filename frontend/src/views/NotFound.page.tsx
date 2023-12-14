@@ -1,5 +1,6 @@
 import { Title, Text, Button, Container, Group } from "@mantine/core";
 import classes from "./NotFound.page.module.css";
+import { Link } from "react-router-dom";
 
 const NotFound = () => {
   return (
@@ -12,7 +13,7 @@ const NotFound = () => {
       </Text>
       <Group justify="center">
         <Button variant="subtle" size="md">
-          Take me back to home page
+          <Link to="/">Take me back to home page</Link>
         </Button>
       </Group>
     </Container>

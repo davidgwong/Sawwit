@@ -1,4 +1,3 @@
-// // @ts-nocheck
 import express from "express";
 import * as database from "../controller/postController";
 const router = express.Router();
@@ -8,6 +7,7 @@ import { canEditPost, isLoggedIn, sortPostBy } from "../utils/helperFunctions";
 router.get("/", async (req, res) => {
   let posts = await database.getPosts(20);
   const user = await req.user;
+  console.log("req.query.sortBy: " + req.query.sortBy);
   let sortBy = (req.query.sortBy as string) || "date";
   [posts, sortBy] = sortPostBy(posts, sortBy);
   res.json({ posts, user, sortBy, active: "posts" });
@@ -19,8 +19,6 @@ router.get("/create", ensureAuthenticated, async (req, res) => {
 });
 
 router.post("/create", ensureAuthenticated, async (req, res) => {
-  // ⭐ TODO
-  // added by PK on 2023 11 30 3:09PM
   const newPost = await req.body;
   const creator = await Promise.resolve(req.user).then((user) => user!.id);
   console.log(newPost);
@@ -34,8 +32,6 @@ router.post("/create", ensureAuthenticated, async (req, res) => {
 });
 
 router.get("/show/:postid", async (req, res) => {
-  // ⭐ TODO
-  // added by PK on 2023 11 30 3:09PM
   const postId = Number(req.params.postid);
   const post = await database.getPost(postId);
   const comments = await database.getCommentsByPostId(Number(postId));
@@ -46,7 +42,7 @@ router.get("/show/:postid", async (req, res) => {
     const timestamp = new Date(post.timestamp);
     const canEdit = canEditPost(post, user);
 
-    res.render("individualPost", {
+    res.json({
       user,
       post,
       comments,
@@ -57,7 +53,7 @@ router.get("/show/:postid", async (req, res) => {
     });
   } else {
     res.status(404);
-    res.render("individualPost", {
+    res.json({
       post,
       loggedIn,
       user,
@@ -67,7 +63,6 @@ router.get("/show/:postid", async (req, res) => {
 });
 
 router.get("/edit/:postid", ensureAuthenticated, async (req, res) => {
-  // ⭐ TODO - David
   const post = await database.getPost(Number(req.params.postid));
   const user = await req.user;
   const loggedIn = isLoggedIn(user);
@@ -87,7 +82,6 @@ router.get("/edit/:postid", ensureAuthenticated, async (req, res) => {
 });
 
 router.post("/edit/:postid", ensureAuthenticated, async (req, res) => {
-  // ⭐ TODO - David
   const incomingEdits = await req.body;
   const user = await req.user;
   const postId = Number(req.params.postid);
@@ -121,7 +115,6 @@ router.get("/deleteconfirm/:postid", ensureAuthenticated, async (req, res) => {
 });
 
 router.post("/delete/:postid", ensureAuthenticated, async (req, res) => {
-  // ⭐ TODO
   const post = await database.getPost(Number(req.params.postid));
   const postSub = post?.subgroup;
   const user = await req.user;

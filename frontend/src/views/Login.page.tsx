@@ -11,8 +11,31 @@ import {
   Button,
 } from "@mantine/core";
 import classes from "./Login.page.module.css";
+import DOMAIN from "../services/endpoint";
+import axios from "axios";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import { useForm } from "@mantine/form";
 
 const LoginPage = () => {
+  const loginData = useLoaderData() as any;
+
+  const form = useForm({
+    initialValues: {
+      uname: "",
+      password: "",
+    },
+  });
+
+  const navigate = useNavigate();
+
+  const handleLogin = async (e: any) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(`${DOMAIN}/auth/login`, form.values);
+      navigate("/");
+    } catch (err) {}
+  };
+
   return (
     <Container size={420} my={40}>
       <Title ta="center" className={classes.title}>
@@ -20,31 +43,45 @@ const LoginPage = () => {
       </Title>
       <Text c="dimmed" size="sm" ta="center" mt={5}>
         Do not have an account yet?{" "}
-        <Anchor size="sm" component="button">
+        <Anchor size="sm" component="button" onClick={() => navigate("/register")}>
           Create account
         </Anchor>
       </Text>
 
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-        <TextInput label="Email" placeholder="Your email" required />
-        <PasswordInput
-          label="Password"
-          placeholder="Your password"
-          required
-          mt="md"
-        />
-        <Group justify="space-between" mt="lg">
-          <Checkbox label="Remember me" />
-          <Anchor component="button" size="sm">
-            Forgot password?
-          </Anchor>
-        </Group>
-        <Button fullWidth mt="xl">
-          Sign in
-        </Button>
+        <form onSubmit={handleLogin}>
+          <TextInput
+            label="Username"
+            placeholder="Your username"
+            required
+            {...form.getInputProps("uname")}
+          />
+          <PasswordInput
+            label="Password"
+            placeholder="Your password"
+            required
+            mt="md"
+            {...form.getInputProps("password")}
+          />
+          <Group justify="space-between" mt="lg">
+            <Checkbox label="Remember me" />
+            <Anchor component="button" size="sm">
+              Forgot password?
+            </Anchor>
+          </Group>
+          <Button type="submit" fullWidth mt="xl">
+            Sign in
+          </Button>
+        </form>
       </Paper>
     </Container>
   );
+};
+
+export const loginLoader = async () => {
+  const res = await axios.get(`${DOMAIN}/auth/login`);
+  console.log(res.data);
+  return res.data;
 };
 
 export default LoginPage;

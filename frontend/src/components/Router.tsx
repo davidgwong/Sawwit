@@ -5,12 +5,14 @@ import {
   createHashRouter,
 } from "react-router-dom";
 
-import LoginPage from "../views/Login.page";
-import PostsPage, { postsLoader } from "../views/Posts.page";
+import LoginPage, { loginLoader } from "../views/Login.page";
+import PostListPage, { postsLoader } from "../views/PostList.page";
 import Layout from "./Layout";
 import NotFound from "../views/NotFound.page";
 import RegisterPage from "../views/Register.page";
 import SubgroupsPage, { subgroupsLoader } from "../views/Subgroups.page";
+import IndividualPostPage, { individualPostLoader } from "../views/IndividualPost.page";
+import LogoutPage from "../views/Logout.page";
 
 const BrowserRouter = () => {
   /*
@@ -30,10 +32,13 @@ const BrowserRouter = () => {
   const router = createHashRouter(
     createRoutesFromElements(
       <Route element={<Layout />}>
-        <Route path="login" element={<LoginPage />} />
+        <Route path="/posts" element={<PostListPage />} loader={postsLoader} />
+        <Route path="login" element={<LoginPage />} loader={loginLoader} />
+        <Route path="logout" element={<LogoutPage />} />
         <Route path="register" element={<RegisterPage />} />
         <Route path="subgroups" element={<SubgroupsPage />} loader={subgroupsLoader} />
-        <Route path="/" element={<PostsPage />} loader={postsLoader} />
+        <Route path="/posts/show/:id" element={<IndividualPostPage />} loader={individualPostLoader} />
+        <Route path="/" element={<PostListPage />} loader={postsLoader} />
         <Route path="*" element={<NotFound />} />
       </Route>
     )
