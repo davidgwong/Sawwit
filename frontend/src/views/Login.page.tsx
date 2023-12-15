@@ -15,9 +15,13 @@ import DOMAIN from "../services/endpoint";
 import axios from "axios";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { useForm } from "@mantine/form";
+import { useAuthenticated, useUser } from "../store/store";
 
 const LoginPage = () => {
   const loginData = useLoaderData() as any;
+
+  const { username, setUsername } = useUser();
+  const { isAuthenticated, setAuthenticated } = useAuthenticated();
 
   const form = useForm({
     initialValues: {
@@ -32,6 +36,9 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const res = await axios.post(`${DOMAIN}/auth/login`, form.values);
+      console.log("handle login res username: " + res.data.username + " res authenticated: " + res.data.isAuthenticated);
+      setUsername(res.data.username);
+      setAuthenticated(res.data.isAuthenticated);
       navigate("/");
     } catch (err) {}
   };

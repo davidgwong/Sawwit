@@ -7,7 +7,6 @@ import { canEditPost, isLoggedIn, sortPostBy } from "../utils/helperFunctions";
 router.get("/", async (req, res) => {
   let posts = await database.getPosts(20);
   const user = await req.user;
-  console.log("req.query.sortBy: " + req.query.sortBy);
   let sortBy = (req.query.sortBy as string) || "date";
   [posts, sortBy] = sortPostBy(posts, sortBy);
   res.json({ posts, user, sortBy, active: "posts" });
