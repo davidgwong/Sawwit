@@ -12,4 +12,12 @@ function forwardAuthenticated(req: Request, res: Response, next: NextFunction) {
   }
   res.json("isAuthenticated");
 }
-export { ensureAuthenticated, forwardAuthenticated };
+
+function checkAuthenticated(req: Request, res: Response, next: NextFunction) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  return next();
+}
+
+export { ensureAuthenticated, forwardAuthenticated, checkAuthenticated };

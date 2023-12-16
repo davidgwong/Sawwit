@@ -5,7 +5,7 @@ import classes from "./Header.module.css";
 import { NavLink } from "react-router-dom";
 import DOMAIN from "../services/endpoint";
 import axios from "axios";
-import { useAuthenticated, useUser } from "../store/store";
+import { useUser } from "../store/store";
 
 const generalLinks = [
   { link: "/", label: "Home" },
@@ -25,15 +25,22 @@ const loggedOutLinks = [
 export default function Header() {
   const [opened, { toggle }] = useDisclosure(true);
 
-  const { username, setUsername } = useUser();
-  const { isAuthenticated, setAuthenticated } = useAuthenticated();
+  const {
+    username,
+    isAuthenticated,
+    setUsername,
+    setUserId,
+    setAuthenticated,
+  } = useUser();
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const res = await axios.get(`${DOMAIN}/auth`);
         setUsername(res.data.username);
+        setUserId(res.data.userId);
         setAuthenticated(res.data.isAuthenticated);
+        console.log("header useEffect checkAuth: " + res.data.username + " " + res.data.userId + " " + res.data.isAuthenticated);
       } catch (err) {
         console.log("error");
       }

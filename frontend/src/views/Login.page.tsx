@@ -15,13 +15,14 @@ import DOMAIN from "../services/endpoint";
 import axios from "axios";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { useForm } from "@mantine/form";
-import { useAuthenticated, useUser } from "../store/store";
+import { useUser } from "../store/store";
+import { useEffect } from "react";
 
 const LoginPage = () => {
-  const loginData = useLoaderData() as any;
-
-  const { username, setUsername } = useUser();
-  const { isAuthenticated, setAuthenticated } = useAuthenticated();
+  const {
+    setUsername,
+    setAuthenticated,
+  } = useUser();
 
   const form = useForm({
     initialValues: {
@@ -36,7 +37,12 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const res = await axios.post(`${DOMAIN}/auth/login`, form.values);
-      console.log("handle login res username: " + res.data.username + " res authenticated: " + res.data.isAuthenticated);
+      console.log(
+        "handle login res username: " +
+          res.data.username +
+          " res authenticated: " +
+          res.data.isAuthenticated
+      );
       setUsername(res.data.username);
       setAuthenticated(res.data.isAuthenticated);
       navigate("/");
@@ -50,7 +56,11 @@ const LoginPage = () => {
       </Title>
       <Text c="dimmed" size="sm" ta="center" mt={5}>
         Do not have an account yet?{" "}
-        <Anchor size="sm" component="button" onClick={() => navigate("/register")}>
+        <Anchor
+          size="sm"
+          component="button"
+          onClick={() => navigate("/register")}
+        >
           Create account
         </Anchor>
       </Text>
@@ -83,12 +93,6 @@ const LoginPage = () => {
       </Paper>
     </Container>
   );
-};
-
-export const loginLoader = async () => {
-  const res = await axios.get(`${DOMAIN}/auth/login`);
-  console.log(res.data);
-  return res.data;
 };
 
 export default LoginPage;

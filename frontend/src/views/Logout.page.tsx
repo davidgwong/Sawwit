@@ -1,28 +1,31 @@
 import { Container } from "@mantine/core";
 import axios from "axios";
 import DOMAIN from "../services/endpoint";
-import { useNavigate } from "react-router-dom";
-import { useAuthenticated, useUser } from "../store/store";
+import { useUser } from "../store/store";
 import { useEffect } from "react";
 
 const LogoutPage = () => {
-  const navigate = useNavigate();
 
-  const { username, setUsername } = useUser();
-  const { isAuthenticated, setAuthenticated } = useAuthenticated();
+  const {
+    username,
+    userId,
+    isAuthenticated,
+    setUsername,
+    setUserId,
+    setAuthenticated,
+  } = useUser();
 
   useEffect(() => {
     const handleLogout = async () => {
       try {
-        const res = await axios.get(`${DOMAIN}/auth/logout`);
+        const res = await axios.post(`${DOMAIN}/auth/logout`);
         console.log(
-          "handle login res username: " +
-            res.data.username +
-            " res authenticated: " +
-            res.data.authenticated
+          "handle logout:"
         );
-        setUsername(res.data.username);
-        setAuthenticated(res.data.isAuthenticated);
+        console.log(res);
+        setUsername(null);
+        setUserId(null);
+        setAuthenticated(false);
       } catch (err) {
         console.log("error");
       }

@@ -5,16 +5,26 @@ import {
   createHashRouter,
 } from "react-router-dom";
 
-import LoginPage, { loginLoader } from "../views/Login.page";
-import PostListPage, { postsLoader } from "../views/PostList.page";
+import LoginPage from "../views/Login.page";
+import PostListPage, {
+  allPostsLoader,
+  subgroupPostsLoader,
+} from "../views/PostList.page";
 import Layout from "./Layout";
 import NotFound from "../views/NotFound.page";
 import RegisterPage from "../views/Register.page";
 import SubgroupsPage, { subgroupsLoader } from "../views/Subgroups.page";
-import IndividualPostPage, { individualPostLoader } from "../views/IndividualPost.page";
+import IndividualPostPage, {
+  individualPostLoader,
+} from "../views/IndividualPost.page";
 import LogoutPage from "../views/Logout.page";
+import NewPostPage from "../views/NewPost.page";
+import ProtectedRoute from "../services/ProtectedRoute";
+import { useUser } from "../store/store";
 
 const BrowserRouter = () => {
+  const { isAuthenticated } = useUser();
+
   /*
    * "/" - Root. Redirects to "/posts"
    * "/posts?sortBy"
@@ -32,13 +42,54 @@ const BrowserRouter = () => {
   const router = createHashRouter(
     createRoutesFromElements(
       <Route element={<Layout />}>
-        <Route path="/posts" element={<PostListPage />} loader={postsLoader} />
-        <Route path="login" element={<LoginPage />} loader={loginLoader} />
-        <Route path="logout" element={<LogoutPage />} />
-        <Route path="register" element={<RegisterPage />} />
-        <Route path="subgroups" element={<SubgroupsPage />} loader={subgroupsLoader} />
-        <Route path="/posts/show/:id" element={<IndividualPostPage />} loader={individualPostLoader} />
-        <Route path="/" element={<PostListPage />} loader={postsLoader} />
+        <Route path="/" element={<PostListPage />} loader={allPostsLoader} />
+        <Route
+          path="/newpost"
+          element={
+            <ProtectedRoute isAllowed={isAuthenticated}>
+              <NewPostPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="login"
+          element={
+            <ProtectedRoute isAllowed={!isAuthenticated} redirectPath="/">
+              <LoginPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="logout"
+          element={
+            <ProtectedRoute isAllowed={isAuthenticated} redirectPath="/">
+              <LogoutPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="register"
+          element={
+            <ProtectedRoute isAllowed={!isAuthenticated} redirectPath="/">
+              <RegisterPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="subgroups"
+          element={<SubgroupsPage />}
+          loader={subgroupsLoader}
+        />
+        <Route
+          path="/subgroups/:subname"
+          element={<PostListPage />}
+          loader={subgroupPostsLoader}
+        />
+        <Route
+          path="/posts/show/:id"
+          element={<IndividualPostPage />}
+          loader={individualPostLoader}
+        />
         <Route path="*" element={<NotFound />} />
       </Route>
     )

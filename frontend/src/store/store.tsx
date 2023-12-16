@@ -2,20 +2,18 @@ import { create } from "zustand";
 
 interface UserState {
   username: string | null;
-  setUsername: (username: string) => void;
+  userId: number | null;
+  isAuthenticated: boolean;
+  setUsername: (username: string | null) => void;
+  setUserId: (userId: number | null) => void;
+  setAuthenticated: (state: boolean) => void;
 }
 
 export const useUser = create<UserState>((set) => ({
   username: null,
-  setUsername: (username: string) => set({ username: username }),
-}));
-
-interface authenticatedState {
-  isAuthenticated: boolean;
-  setAuthenticated: (state: boolean) => void;
-}
-
-export const useAuthenticated = create<authenticatedState>((set) => ({
+  userId: null,
   isAuthenticated: false,
+  setUsername: (username: string | null) => set({ username: username }),
+  setUserId: (userId: number | null) => set({ userId: userId }),
   setAuthenticated: (state: boolean) => set({ isAuthenticated: state }),
 }));
