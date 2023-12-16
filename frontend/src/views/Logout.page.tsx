@@ -7,9 +7,6 @@ import { useEffect } from "react";
 const LogoutPage = () => {
 
   const {
-    username,
-    userId,
-    isAuthenticated,
     setUsername,
     setUserId,
     setAuthenticated,

@@ -7,9 +7,10 @@ import { canEditPost, isLoggedIn, sortPostBy } from "../utils/helperFunctions";
 router.get("/", async (req, res) => {
   let posts = await database.getPosts(20);
   const user = await req.user;
-  let sortBy = (req.query.sortBy as string) || "date";
-  [posts, sortBy] = sortPostBy(posts, sortBy);
-  res.json({ posts, user, sortBy, active: "posts" });
+  posts = posts.map((post: DecoratedPost) => ({
+    ...post,
+    voteStatus: post.votes.find((vote) => vote.user_id === user?.id)?.value || 0,}))
+  res.json({ posts, user, active: "posts" });
 });
 
 router.get("/create", ensureAuthenticated, async (req, res) => {
@@ -166,7 +167,7 @@ router.post("/vote/", ensureAuthenticated, async (req, res) => {
   const userVote = post?.votes.find(
     (val) => val.user_id === Number(user_id!.id)
   );
-  res.json({ score: post!.score, userVote: userVote });
+  res.json({ score: post!.score, userVote: userVote?.value });
 });
 
 export default router;

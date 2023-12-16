@@ -1,12 +1,14 @@
-import { Container, Title, Text, Paper, SegmentedControl } from "@mantine/core";
+import { Container, Title, Text, SegmentedControl } from "@mantine/core";
 import axios from "axios";
 import DOMAIN from "../services/endpoint";
-import { Link, useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import { useState } from "react";
+import PostCard from "../components/PostCard";
 
 axios.defaults.withCredentials = true;
 
 function sortPostBy(posts: any[], sortBy: string) {
+  sortBy = sortBy.toLowerCase();
   if (sortBy === "top") {
     return posts.sort((a, b) => b.score - a.score);
   }
@@ -23,43 +25,37 @@ function sortPostBy(posts: any[], sortBy: string) {
 
 const PostListPage = () => {
   const postData = useLoaderData() as any;
-  const [sortBy, setSortBy] = useState("date");
+  const [sortBy, setSortBy] = useState("Date");
 
   return (
     <Container size={1400}>
       <Title order={1} my="sm">
         Welcome to Sawwit, the face page of the internet.
       </Title>
-      <Text>
-        Sort by:
-        <SegmentedControl
-          radius="sm"
-          size="sm"
-          data={["Top", "Hot", "Controversial", "Date"]}
-          onChange={(value) => setSortBy(value.toLowerCase())}
-        />
-      </Text>
+      <Text>Sort by:</Text>
+      <SegmentedControl
+        radius="sm"
+        size="sm"
+        data={["Top", "Hot", "Controversial", "Date"]}
+        onChange={(value) => setSortBy(value)}
+        value={sortBy}
+      />
       {sortPostBy(postData.posts, sortBy).map((post: any) => (
-        <Paper key={post.id} withBorder p="md" my="sm">
-          <Title order={2}>
-            <Link to={"/posts/show/" + post.id}>{post.title}</Link>
-          </Title>
-          <Text>(subgroup.{post.subgroup})</Text>
-          <Text>
-            Posted by <strong>{post.creator.uname}</strong> on{" "}
-            {new Date(post.timestamp).toString()}
-          </Text>
-          <Text>Score: {post.score}</Text>
-        </Paper>
+        <PostCard post={post} key={post.id} />
       ))}
     </Container>
   );
 };
 
-export const postsLoader = async () => {
+export const allPostsLoader = async () => {
   const res = await axios.get(`${DOMAIN}/posts`, {
     params: { sortBy: "date" },
   });
+  return res.data;
+};
+
+export const subgroupPostsLoader = async ({ params }: { params: any }) => {
+  const res = await axios.get(`${DOMAIN}/subs/show/${params.subname}`);
   return res.data;
 };
 

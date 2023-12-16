@@ -1,7 +1,7 @@
 import { Container } from "@mantine/core";
 import axios from "axios";
 import DOMAIN from "../services/endpoint";
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 
 const SubgroupsPage = () => {
   const subgroups = useLoaderData() as any;
@@ -11,7 +11,7 @@ const SubgroupsPage = () => {
 
       {subgroups.subs.map((sub: any) => (
         <Container key={sub}>
-          <h1>{sub}</h1>
+          <Link to={"/subgroups/" + sub}>subgroup.{sub}</Link>
         </Container>
       ))}
     </Container>
