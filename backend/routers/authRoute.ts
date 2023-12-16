@@ -4,27 +4,31 @@ import { forwardAuthenticated } from "../middleware/checkAuth";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  res.json({ isAuthenticated: req.isAuthenticated, username: req.user?.uname });
+  const username = await req.user?.uname;
+  const userId = await req.user?.id;
+  res.json({ isAuthenticated: req.isAuthenticated, username: username, userId: userId });
 });
 
 router.get("/login", forwardAuthenticated, async (req, res) => {
   const username = await req.user?.uname;
-  res.json({ isAuthenticated: true, username: username });
+  res.json({ isAuthenticated: req.isAuthenticated, username: username });
 });
 
 router.post("/login", passport.authenticate("local"), async (req, res) => {
   const username = await req.user?.uname;
-  res.json({ isAuthenticated: true, username: username });
+  const userId = await req.user?.id;
+  res.status(200).json({ isAuthenticated: req.isAuthenticated, username: username, userId: userId });
 });
 
-router.get("/logout", async (req, res, next) => {
+router.post("/logout", async (req, res, next) => {
   req.logout(function (err) {
     if (err) {
       return next(err);
     }
   });
   const username = await req.user?.uname;
-  res.json({ isAuthenticated: false, username: username });
+  const userId = await req.user?.id;
+  res.status(200).json({ isAuthenticated: req.isAuthenticated, username: username, userId: userId });
 });
 
 export default router;

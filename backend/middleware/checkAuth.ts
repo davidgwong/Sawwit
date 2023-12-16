@@ -3,7 +3,7 @@ function ensureAuthenticated(req: Request, res: Response, next: NextFunction) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect("/auth/login");
+  res.sendStatus(401);
 }
 
 function forwardAuthenticated(req: Request, res: Response, next: NextFunction) {

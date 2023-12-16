@@ -16,7 +16,7 @@ router.get("/show/:subname", async (req, res) => {
   let sortBy = (req.query.sortBy as string) || "date";
   [posts, sortBy] = sortPostBy(posts, sortBy);
   const user = await req.user;
-  res.render("sub", {posts, subName, sortBy, user, active: "subs",});
+  res.json({ posts, user, sortBy, active: "posts" });
 });
 
 export default router;
