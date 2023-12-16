@@ -1,20 +1,20 @@
 import {
   Anchor,
   Button,
-  Checkbox,
   Container,
-  Group,
   Paper,
   PasswordInput,
   TextInput,
   Title,
   Text,
+  Alert,
 } from "@mantine/core";
 import classes from "./Register.page.module.css";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "@mantine/form";
 import DOMAIN from "../services/endpoint";
 import axios from "axios";
+import { useState } from "react";
 
 const RegisterPage = () => {
   const form = useForm({
@@ -26,35 +26,67 @@ const RegisterPage = () => {
 
   const navigate = useNavigate();
 
+  const [registerAttempt, setRegisterAttempt] = useState({
+    attempted: false,
+    success: false,
+    message: "",
+  });
+
   const handleRegister = async (e: any) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${DOMAIN}/auth/login`, form.values);
-      console.log(
-        "handle login res username: " +
-          res.data.username +
-          " res authenticated: " +
-          res.data.isAuthenticated
-      );
-      navigate("/");
-    } catch (err) {}
+      const res = await axios.post(`${DOMAIN}/users/`, form.values);
+      setRegisterAttempt({
+        attempted: true,
+        success: true,
+        message: res.data,
+      });
+      form.reset();
+    } catch (err: any) {
+      console.log(err);
+      setRegisterAttempt({
+        attempted: true,
+        success: false,
+        message: err.response.data,
+      });
+    }
   };
 
   return (
     <Container size={420} my={40}>
       <Title ta="center" className={classes.title}>
-      Sign up and start posting on Sawwit!
+        Sign up and start posting on Sawwit!
       </Title>
       <Text c="dimmed" size="sm" ta="center" mt={5}>
-      Already have an account?{" "}
-        <Anchor
-          size="sm"
-          component="button"
-          onClick={() => navigate("/login")}
-        >
+        Already have an account?{" "}
+        <Anchor size="sm" component="button" onClick={() => navigate("/login")}>
           Log in here
         </Anchor>
       </Text>
+      <br />
+
+      {registerAttempt.attempted ? (
+        registerAttempt.success ? (
+          <Alert variant="light" color="green">
+            <Text size="sm" ta="center">
+              Successfully registered.{" "}
+              <Anchor
+                size="sm"
+                component="button"
+                onClick={() => navigate("/login")}
+              >
+                Please log in here.
+              </Anchor>
+            </Text>
+          </Alert>
+        ) : (
+          <Alert variant="light" color="red">
+            {registerAttempt.message}
+          </Alert>
+        )
+      ) : (
+        <></>
+      )}
 
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <form onSubmit={handleRegister}>
@@ -71,12 +103,6 @@ const RegisterPage = () => {
             mt="md"
             {...form.getInputProps("password")}
           />
-          <Group justify="space-between" mt="lg">
-            <Checkbox label="Remember me" />
-            <Anchor component="button" size="sm">
-              Forgot password?
-            </Anchor>
-          </Group>
           <Button type="submit" fullWidth mt="xl">
             Sign in
           </Button>

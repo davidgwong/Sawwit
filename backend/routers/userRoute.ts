@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   const user = await req.user;
-  res.render("signup", { messages: "", user, active: "signup", });
+  res.render("signup", { messages: "", user, active: "signup" });
 });
 
 router.post("/", async (req, res) => {
@@ -15,18 +15,12 @@ router.post("/", async (req, res) => {
   const user = await req.user;
   const unameExist = await database.getUserByUsername(uname);
   if (unameExist)
-    res.render("signup", {
-      messages: "Username already exists. Please try another username.",
-      user,
-      active: "signup",
-    });
+    res
+      .status(409)
+      .json("Username already exists. Please try another username.");
   else {
     await database.createUser(uname, password);
-    res.render("login", {
-      messages: "Successfully signed up. Please log in.",
-      user,
-      active: "signup",
-    });
+    res.status(201).json("Successfully signed up. Please log in.");
   }
 });
 
