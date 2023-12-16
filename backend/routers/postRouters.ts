@@ -2,7 +2,7 @@ import express from "express";
 import * as database from "../controller/postController";
 const router = express.Router();
 import { ensureAuthenticated } from "../middleware/checkAuth";
-import { canEditPost, isLoggedIn, sortPostBy } from "../utils/helperFunctions";
+import { canEditPost, isLoggedIn } from "../utils/helperFunctions";
 
 router.get("/", async (req, res) => {
   let posts = await database.getPosts(20);
@@ -21,14 +21,12 @@ router.get("/create", ensureAuthenticated, async (req, res) => {
 router.post("/create", ensureAuthenticated, async (req, res) => {
   const newPost = await req.body;
   const creator = await Promise.resolve(req.user).then((user) => user!.id);
-  console.log(newPost);
-  console.log(creator);
   const title = newPost.title;
   const link = newPost.link;
   const description = newPost.description;
   const subgroup = newPost.subgroup;
-  await database.createPost(title, link, creator, description, subgroup);
-  res.status(200).redirect("/posts");
+  const createdPost = await database.createPost(title, link, creator, description, subgroup);
+  res.status(200).json({postId: createdPost.id});
 });
 
 router.get("/show/:postid", async (req, res) => {

@@ -1,12 +1,14 @@
 import axios from "axios";
 import DOMAIN from "../services/endpoint";
-import { Title, Text, Paper } from "@mantine/core";
+import { Title, Text, Paper, Container } from "@mantine/core";
 import { useLoaderData } from "react-router-dom";
+import NotFound from "./NotFound.page";
 
 const IndividualPostPage = () => {
   const postData = useLoaderData() as any;
+  if (!postData) return <NotFound />;
   return (
-    <>
+    <Container>
       <Title order={2}>{postData.post.title}</Title>
       <Text>(subgroup.{postData.post.subgroup})</Text>
       <Text>
@@ -26,14 +28,17 @@ const IndividualPostPage = () => {
           </Text>
         </Paper>
       ))}
-      
-    </>
+    </Container>
   );
 };
 
 export const individualPostLoader = async ({ params }: { params: any }) => {
-  const res = await axios.get(`${DOMAIN}/posts/show/${params.id}`);
-  return res.data;
+  try {
+    const res = await axios.get(`${DOMAIN}/posts/show/${params.id}`);
+    return res.data;
+  } catch (err) {
+    return null;
+  }
 };
 
 export default IndividualPostPage;

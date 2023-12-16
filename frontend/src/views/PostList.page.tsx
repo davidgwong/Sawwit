@@ -28,7 +28,7 @@ const PostListPage = () => {
   const [sortBy, setSortBy] = useState("Date");
 
   return (
-    <Container size={1400}>
+    <Container>
       <Title order={1} my="sm">
         Welcome to Sawwit, the face page of the internet.
       </Title>
