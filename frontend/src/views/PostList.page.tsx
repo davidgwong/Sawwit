@@ -24,7 +24,7 @@ function sortPostBy(posts: any[], sortBy: string) {
 }
 
 const PostListPage = () => {
-  const postData = useLoaderData() as any;
+  const postData = useLoaderData() as DecoratedPost[];
   const [sortBy, setSortBy] = useState("Date");
 
   return (
@@ -40,7 +40,7 @@ const PostListPage = () => {
         onChange={(value) => setSortBy(value)}
         value={sortBy}
       />
-      {sortPostBy(postData.posts, sortBy).map((post: any) => (
+      {sortPostBy(postData, sortBy).map((post: any) => (
         <PostCard post={post} key={post.id} />
       ))}
     </Container>
@@ -48,9 +48,7 @@ const PostListPage = () => {
 };
 
 export const allPostsLoader = async () => {
-  const res = await axios.get(`${DOMAIN}/posts`, {
-    params: { sortBy: "date" },
-  });
+  const res = await axios.get(`${DOMAIN}/posts`);
   return res.data;
 };
 

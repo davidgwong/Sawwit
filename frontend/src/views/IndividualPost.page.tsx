@@ -1,25 +1,46 @@
 import axios from "axios";
 import DOMAIN from "../services/endpoint";
-import { Title, Text, Paper, Container } from "@mantine/core";
+import { Title, Text, Paper, Container, Textarea, Button } from "@mantine/core";
 import { useLoaderData } from "react-router-dom";
 import NotFound from "./NotFound.page";
+import { useForm } from "@mantine/form";
+import { useUser } from "../store/store";
 
 const IndividualPostPage = () => {
-  const postData = useLoaderData() as any;
+  const postData = useLoaderData() as DecoratedPost;
   if (!postData) return <NotFound />;
+
+  const { isAuthenticated } = useUser();
+
+  const form = useForm({
+    initialValues: {
+      comment: "",
+    },
+  });
+
+  const handleNewComment = async () => {
+    try {
+      const res = await axios.post(
+        `${DOMAIN}/posts/comment-create/` + postData.id,
+        { newComment: form.values.comment }
+      );
+      console.log(res);
+    } catch (err) {}
+  };
+
   return (
     <Container>
-      <Title order={2}>{postData.post.title}</Title>
-      <Text>(subgroup.{postData.post.subgroup})</Text>
+      <Title order={2}>{postData.title}</Title>
+      <Text>(subgroup.{postData.subgroup})</Text>
       <Text>
-        Posted by <strong>{postData.post.creator.uname}</strong> on{" "}
-        {new Date(postData.post.timestamp).toString()}
+        Posted by <strong>{postData.creator.uname}</strong> on{" "}
+        {new Date(postData.timestamp).toString()}
       </Text>
-      <Text>{postData.post.description}</Text>
+      <Text>{postData.description}</Text>
       <br />
       <Title order={3}>Comments</Title>
 
-      {postData.post.comments.map((comment: any) => (
+      {postData.comments.map((comment: any) => (
         <Paper key={comment.id}>
           <Text>{comment.description}</Text>
           <Text>
@@ -28,6 +49,18 @@ const IndividualPostPage = () => {
           </Text>
         </Paper>
       ))}
+
+      {isAuthenticated ? (
+        <form onSubmit={handleNewComment}>
+          <Text mt="sm">Add a comment</Text>
+          <Textarea {...form.getInputProps("comment")}></Textarea>
+          <Button type="submit" mt="sm">
+            Add comment
+          </Button>
+        </form>
+      ) : (
+        <></>
+      )}
     </Container>
   );
 };

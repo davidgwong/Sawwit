@@ -9,8 +9,10 @@ router.get("/", async (req, res) => {
   const user = await req.user;
   posts = posts.map((post: DecoratedPost) => ({
     ...post,
-    voteStatus: post.votes.find((vote) => vote.user_id === user?.id)?.value || 0,}))
-  res.json({ posts, user, active: "posts" });
+    voteStatus:
+      post.votes.find((vote) => vote.user_id === user?.id)?.value || 0,
+  }));
+  res.json(posts);
 });
 
 router.get("/create", ensureAuthenticated, async (req, res) => {
@@ -25,8 +27,14 @@ router.post("/create", ensureAuthenticated, async (req, res) => {
   const link = newPost.link;
   const description = newPost.description;
   const subgroup = newPost.subgroup;
-  const createdPost = await database.createPost(title, link, creator, description, subgroup);
-  res.status(200).json({postId: createdPost.id});
+  const createdPost = await database.createPost(
+    title,
+    link,
+    creator,
+    description,
+    subgroup
+  );
+  res.status(200).json({ postId: createdPost.id });
 });
 
 router.get("/show/:postid", async (req, res) => {
@@ -40,23 +48,10 @@ router.get("/show/:postid", async (req, res) => {
     const timestamp = new Date(post.timestamp);
     const canEdit = canEditPost(post, user);
 
-    res.json({
-      user,
-      post,
-      comments,
-      timestamp,
-      canEdit,
-      loggedIn,
-      active: "none",
-    });
+    res.json(post);
   } else {
     res.status(404);
-    res.json({
-      post,
-      loggedIn,
-      user,
-      active: "none",
-    });
+    res.json(post);
   }
 });
 
@@ -135,7 +130,6 @@ router.post(
   "/comment-create/:postid",
   ensureAuthenticated,
   async (req, res) => {
-    // ⭐ TODO - David
     const incomingComment = await req.body.newComment;
     const user = await req.user;
     const postId = Number(req.params.postid);
@@ -146,10 +140,8 @@ router.post(
     );
     if (incomingComment == addedComment.description) {
       res.status(200);
-      res.redirect("/posts/show/" + postId);
     } else {
       res.status(500);
-      res.redirect("/posts/show/" + postId);
     }
   }
 );
