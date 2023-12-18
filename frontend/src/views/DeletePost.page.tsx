@@ -5,7 +5,6 @@ import { Center } from "@mantine/core";
 
 const DeletePostPage = () => {
   const response = useLoaderData() as any;
-  console.log(response.message);
   return <Center>{response.message}</Center>;
 };
 

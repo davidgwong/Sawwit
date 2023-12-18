@@ -114,7 +114,7 @@ router.post("/delete/:postid", ensureAuthenticated, async (req, res) => {
     const canEdit = canEditPost(post, user);
     if (canEdit) {
       await database.deletePost(post.id);
-      res.status(204).json({message: "Post was successfully deleted."});
+      res.status(200).json({message: "Post was successfully deleted."});
     } else {
       res.status(403).json({message: "Post cannot be deleted (not original poster)."});
     }
