@@ -13,16 +13,12 @@ import {
 import classes from "./Login.page.module.css";
 import DOMAIN from "../services/endpoint";
 import axios from "axios";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "@mantine/form";
 import { useUser } from "../store/store";
-import { useEffect } from "react";
 
 const LoginPage = () => {
-  const {
-    setUsername,
-    setAuthenticated,
-  } = useUser();
+  const { setUsername, setUserId, setAuthenticated } = useUser();
 
   const form = useForm({
     initialValues: {
@@ -44,6 +40,7 @@ const LoginPage = () => {
           res.data.isAuthenticated
       );
       setUsername(res.data.username);
+      setUserId(res.data.userId);
       setAuthenticated(res.data.isAuthenticated);
       navigate("/");
     } catch (err) {}

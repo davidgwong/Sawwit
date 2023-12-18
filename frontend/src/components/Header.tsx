@@ -40,9 +40,8 @@ export default function Header() {
         setUsername(res.data.username);
         setUserId(res.data.userId);
         setAuthenticated(res.data.isAuthenticated);
-        console.log("header useEffect checkAuth: " + res.data.username + " " + res.data.userId + " " + res.data.isAuthenticated);
       } catch (err) {
-        console.log("error");
+        console.log(err);
       }
     };
 

@@ -21,6 +21,7 @@ import LogoutPage from "../views/Logout.page";
 import NewPostPage from "../views/NewPost.page";
 import ProtectedRoute from "../services/ProtectedRoute";
 import { useUser } from "../store/store";
+import DeletePostPage, { deletePostLoader } from "../views/DeletePost.page";
 
 const BrowserRouter = () => {
   const { isAuthenticated } = useUser();
@@ -50,6 +51,15 @@ const BrowserRouter = () => {
               <NewPostPage />
             </ProtectedRoute>
           }
+        />
+        <Route
+          path="/posts/delete/:id"
+          element={
+            <ProtectedRoute isAllowed={isAuthenticated}>
+              <DeletePostPage />
+            </ProtectedRoute>
+          }
+          loader={deletePostLoader}
         />
         <Route
           path="login"

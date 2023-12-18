@@ -1,10 +1,20 @@
 import axios from "axios";
 import DOMAIN from "../services/endpoint";
-import { Title, Text, Paper, Container, Textarea, Button } from "@mantine/core";
+import {
+  Title,
+  Text,
+  Paper,
+  Container,
+  Textarea,
+  Button,
+  Anchor,
+  Group,
+} from "@mantine/core";
 import { useLoaderData } from "react-router-dom";
 import NotFound from "./NotFound.page";
 import { useForm } from "@mantine/form";
 import { useUser } from "../store/store";
+import PostCard from "../components/PostCard";
 
 const IndividualPostPage = () => {
   const postData = useLoaderData() as DecoratedPost;
@@ -30,15 +40,17 @@ const IndividualPostPage = () => {
 
   return (
     <Container>
-      <Title order={2}>{postData.title}</Title>
-      <Text>(subgroup.{postData.subgroup})</Text>
-      <Text>
-        Posted by <strong>{postData.creator.uname}</strong> on{" "}
-        {new Date(postData.timestamp).toString()}
-      </Text>
+      <PostCard post={postData} />
+
       <Text>{postData.description}</Text>
-      <br />
-      <Title order={3}>Comments</Title>
+      <Group gap={5}>
+        <Text fw={700}>Link: </Text>
+        <Anchor href={postData.link}>{postData.link}</Anchor>{" "}
+      </Group>
+
+      <Title order={3} mt="md">
+        Comments
+      </Title>
 
       {postData.comments.map((comment: any) => (
         <Paper key={comment.id}>

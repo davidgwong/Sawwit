@@ -40,15 +40,15 @@ router.post("/create", ensureAuthenticated, async (req, res) => {
 router.get("/show/:postid", async (req, res) => {
   const postId = Number(req.params.postid);
   const post = await database.getPost(postId);
-  const comments = await database.getCommentsByPostId(Number(postId));
   const user = await req.user;
-  const loggedIn = isLoggedIn(user);
+  const postAuthView = {
+    ...post,
+    voteStatus:
+      post?.votes.find((vote) => vote.user_id === user?.id)?.value || 0,
+  };
 
-  if (post) {
-    const timestamp = new Date(post.timestamp);
-    const canEdit = canEditPost(post, user);
-
-    res.json(post);
+  if (postAuthView) {
+    res.json(postAuthView);
   } else {
     res.status(404);
     res.json(post);
@@ -109,20 +109,17 @@ router.get("/deleteconfirm/:postid", ensureAuthenticated, async (req, res) => {
 
 router.post("/delete/:postid", ensureAuthenticated, async (req, res) => {
   const post = await database.getPost(Number(req.params.postid));
-  const postSub = post?.subgroup;
   const user = await req.user;
-  const loggedIn = isLoggedIn(user);
   if (post) {
-    await database.deletePost(post.id);
-    res.redirect("/subs/show/" + postSub);
+    const canEdit = canEditPost(post, user);
+    if (canEdit) {
+      await database.deletePost(post.id);
+      res.status(204).json({message: "Post was successfully deleted."});
+    } else {
+      res.status(403).json({message: "Post cannot be deleted (not original poster)."});
+    }
   } else {
-    res.status(404);
-    res.render("individualPost", {
-      post,
-      loggedIn,
-      user,
-      active: "none",
-    });
+    res.status(404).json({message: "Post cannot be deleted (post does not exist)."});
   }
 });
 
@@ -139,9 +136,9 @@ router.post(
       incomingComment
     );
     if (incomingComment == addedComment.description) {
-      res.status(200);
+      res.sendStatus(200);
     } else {
-      res.status(500);
+      res.sendStatus(500);
     }
   }
 );
