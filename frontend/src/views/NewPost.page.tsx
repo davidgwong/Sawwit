@@ -30,25 +30,29 @@ const NewPostPage = () => {
         <TextInput
           label="Title"
           description="Title of new post"
-          placeholder="Title of new post"
+          placeholder="Enter a title..."
+          required
           {...form.getInputProps("title")}
         />
         <TextInput
           label="subgroup"
           description="subgroup of new post"
-          placeholder="subgroup of new post"
+          placeholder="Enter the subgroup..."
+          required
           {...form.getInputProps("subgroup")}
         />
         <TextInput
           label="Link"
           description="Link of new post"
-          placeholder="Link of new post"
+          placeholder="Add a link..."
+          required
           {...form.getInputProps("link")}
         />
         <Textarea
           label="Description"
           description="Description of new post"
-          placeholder="Description of new post"
+          placeholder="Add a description..."
+          required
           {...form.getInputProps("description")}
         />
         <Button type="submit" mt="xl">

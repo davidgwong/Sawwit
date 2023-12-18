@@ -1,11 +1,18 @@
 import axios from "axios";
 import DOMAIN from "../services/endpoint";
-import { useLoaderData } from "react-router-dom";
-import { Center } from "@mantine/core";
+import { Link, useLoaderData } from "react-router-dom";
+import { Center, Title, Text, Space, Container } from "@mantine/core";
 
 const DeletePostPage = () => {
   const response = useLoaderData() as any;
-  return <Center>{response.message}</Center>;
+  return (
+    <Container>
+      <Center><Title>Deleting post...</Title></Center>
+      <Space h="xl" />
+      <Center><Text>{response.message}</Text></Center>
+      <Center><Link to="/">Click here to go back to home.</Link></Center>
+    </Container>
+  );
 };
 
 export const deletePostLoader = async ({ params }: { params: any }) => {
