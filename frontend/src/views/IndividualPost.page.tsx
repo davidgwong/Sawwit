@@ -3,18 +3,20 @@ import DOMAIN from "../services/endpoint";
 import {
   Title,
   Text,
-  Paper,
   Container,
   Textarea,
   Button,
   Anchor,
   Group,
+  Divider,
+  Paper,
 } from "@mantine/core";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import NotFound from "./NotFound.page";
 import { useForm } from "@mantine/form";
 import { useUser } from "../store/store";
 import PostCard from "../components/PostCard";
+import CommentCard from "../components/CommentCard";
 
 const IndividualPostPage = () => {
   const postData = useLoaderData() as DecoratedPost;
@@ -28,38 +30,37 @@ const IndividualPostPage = () => {
     },
   });
 
-  const handleNewComment = async () => {
+  const navigate = useNavigate();
+
+  const handleNewComment = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
-      const res = await axios.post(
-        `${DOMAIN}/posts/comment-create/` + postData.id,
-        { newComment: form.values.comment }
-      );
-      console.log(res);
+      await axios.post(`${DOMAIN}/posts/comment-create/` + postData.id, {
+        newComment: form.values.comment,
+      });
     } catch (err) {}
+    navigate(0);
   };
 
   return (
     <Container>
       <PostCard post={postData} />
-
-      <Text>{postData.description}</Text>
-      <Group gap={5}>
-        <Text fw={700}>Link: </Text>
-        <Anchor href={postData.link}>{postData.link}</Anchor>{" "}
-      </Group>
+      <Paper withBorder p="sm">
+        <Text mb="sm">{postData.description}</Text>
+        <Group gap={5}>
+          <Text fw={700}>Link: </Text>
+          <Anchor href={postData.link}>{postData.link}</Anchor>{" "}
+        </Group>
+      </Paper>
 
       <Title order={3} mt="md">
         Comments
       </Title>
 
+      <Divider my="sm" />
+
       {postData.comments.map((comment: any) => (
-        <Paper key={comment.id}>
-          <Text>{comment.description}</Text>
-          <Text>
-            Commented by <strong>{comment.creator.uname}</strong> on{" "}
-            {new Date(comment.timestamp).toString()}
-          </Text>
-        </Paper>
+        <CommentCard key={comment.id} comment={comment} />
       ))}
 
       {isAuthenticated ? (

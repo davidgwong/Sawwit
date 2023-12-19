@@ -41,13 +41,13 @@ router.get("/show/:postid", async (req, res) => {
   const postId = Number(req.params.postid);
   const post = await database.getPost(postId);
   const user = await req.user;
-  const postAuthView = {
-    ...post,
-    voteStatus:
-      post?.votes.find((vote) => vote.user_id === user?.id)?.value || 0,
-  };
 
-  if (postAuthView) {
+  if (post) {
+    const postAuthView = {
+      ...post,
+      voteStatus:
+        post?.votes.find((vote) => vote.user_id === user?.id)?.value || 0,
+    };
     res.json(postAuthView);
   } else {
     res.status(404);
@@ -114,12 +114,16 @@ router.post("/delete/:postid", ensureAuthenticated, async (req, res) => {
     const canEdit = canEditPost(post, user);
     if (canEdit) {
       await database.deletePost(post.id);
-      res.status(200).json({message: "Post was successfully deleted."});
+      res.status(200).json({ message: "Post was successfully deleted." });
     } else {
-      res.status(403).json({message: "Post cannot be deleted (not original poster)."});
+      res
+        .status(403)
+        .json({ message: "Post cannot be deleted (not original poster)." });
     }
   } else {
-    res.status(404).json({message: "Post cannot be deleted (post does not exist)."});
+    res
+      .status(404)
+      .json({ message: "Post cannot be deleted (post does not exist)." });
   }
 });
 

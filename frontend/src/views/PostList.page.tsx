@@ -34,6 +34,7 @@ const PostListPage = () => {
       </Title>
       <Text>Sort by:</Text>
       <SegmentedControl
+        mb="sm"
         radius="sm"
         size="sm"
         data={["Top", "Hot", "Controversial", "Date"]}

@@ -1,4 +1,4 @@
-import { Paper, Title, ActionIcon, Text, Grid, Anchor } from "@mantine/core";
+import { Paper, Title, ActionIcon, Text, Grid, Anchor, Divider } from "@mantine/core";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import classes from "./PostCard.module.css";
@@ -7,7 +7,7 @@ import DOMAIN from "../services/endpoint";
 import { useUser } from "../store/store";
 import { useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
-import ConfirmDeletePost from "./ConfirmDeletePost";
+import ConfirmDelete from "./ConfirmDelete";
 
 const PostCard = ({ post }: { post: any }) => {
   const { isAuthenticated, userId } = useUser();
@@ -34,7 +34,7 @@ const PostCard = ({ post }: { post: any }) => {
   };
 
   return (
-    <Paper key={post.id} withBorder p="md" my="sm">
+    <Paper key={post.id}>
       <Grid align="Center">
         <Grid.Col span="content">
           <ActionIcon
@@ -85,11 +85,13 @@ const PostCard = ({ post }: { post: any }) => {
           </Text>
         </Grid.Col>
       </Grid>
-      <ConfirmDeletePost
-        postId={post.id}
+      <ConfirmDelete
+        typeId={post.id}
         opened={opened}
         openClose={{ open, close }}
+        type="post"
       />
+      <Divider my="sm"/>
     </Paper>
   );
 };

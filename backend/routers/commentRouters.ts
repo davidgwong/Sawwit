@@ -2,7 +2,11 @@ import express from "express";
 import * as database from "../controller/commentController";
 const router = express.Router();
 import { ensureAuthenticated } from "../middleware/checkAuth";
-import { canEditComment, canEditReply, isLoggedIn } from "../utils/helperFunctions";
+import {
+  canEditComment,
+  canEditReply,
+  isLoggedIn,
+} from "../utils/helperFunctions";
 
 router.get("/show/:commentid", async (req, res) => {
   const commentId = req.params.commentid;
@@ -12,10 +16,22 @@ router.get("/show/:commentid", async (req, res) => {
   const loggedIn = isLoggedIn(user);
   if (comment) {
     const canEdit = canEditComment(comment, user);
-    res.render("individualComment", { comment, canEdit, loggedIn, user, active: "none", replies });
+    res.render("individualComment", {
+      comment,
+      canEdit,
+      loggedIn,
+      user,
+      active: "none",
+      replies,
+    });
   } else {
     res.status(404);
-    res.render("individualComment", { comment, loggedIn, user, active: "none", });
+    res.render("individualComment", {
+      comment,
+      loggedIn,
+      user,
+      active: "none",
+    });
   }
 });
 
@@ -48,7 +64,7 @@ router.get(
     const loggedIn = isLoggedIn(user);
     if (reply) {
       const canEdit = canEditReply(reply, user);
-      if (canEdit) res.render("deleteReply", { reply, user, active: "none", });
+      if (canEdit) res.render("deleteReply", { reply, user, active: "none" });
       else res.redirect("/");
     } else {
       res.status(404);
@@ -89,11 +105,17 @@ router.get("/reply/edit/:replyid", ensureAuthenticated, async (req, res) => {
   const loggedIn = isLoggedIn(user);
   if (reply) {
     const canEdit = canEditReply(reply, user);
-    if (canEdit) res.render("editReply", { reply, loggedIn, user, active: "none", });
+    if (canEdit)
+      res.render("editReply", { reply, loggedIn, user, active: "none" });
     else res.redirect("/comments/show/" + comment!.id);
   } else {
     res.status(404);
-    res.render("individualComment", { comment, loggedIn, user, active: "none", });
+    res.render("individualComment", {
+      comment,
+      loggedIn,
+      user,
+      active: "none",
+    });
   }
 });
 
@@ -113,21 +135,29 @@ router.get("/edit/:commentid", ensureAuthenticated, async (req, res) => {
   const loggedIn = isLoggedIn(user);
   if (comment) {
     const canEdit = canEditComment(comment, user);
-    if (canEdit) res.render("editComment", { comment, loggedIn, user, active: "none", });
+    if (canEdit)
+      res.render("editComment", { comment, loggedIn, user, active: "none" });
     else res.redirect("/posts/show/" + comment.post_id);
   } else {
     res.status(404);
-    res.render("individualComment", { comment, loggedIn, user, active: "none", });
+    res.render("individualComment", {
+      comment,
+      loggedIn,
+      user,
+      active: "none",
+    });
   }
 });
 
 router.post("/edit/:commentid", ensureAuthenticated, async (req, res) => {
   const incomingEdits = await req.body;
+  console.log(incomingEdits);
   const user = await req.user;
   const commentId = req.params.commentid;
+  console.log(commentId);
   await database.editComment(Number(commentId), incomingEdits);
-  const comment = await database.getComment(Number(commentId));
-  res.redirect("/posts/show/" + comment!.post_id);
+  console.log(database.getComment(Number(commentId)));
+  res.sendStatus(200);
 });
 
 router.get(
@@ -139,7 +169,8 @@ router.get(
     const loggedIn = isLoggedIn(user);
     if (comment) {
       const canEdit = canEditComment(comment, user);
-      if (canEdit) res.render("deleteComments", { comment, user, active: "none", });
+      if (canEdit)
+        res.render("deleteComments", { comment, user, active: "none" });
       else res.redirect("/");
     } else {
       res.status(404);
@@ -156,18 +187,20 @@ router.get(
 router.post("/delete/:commentid", ensureAuthenticated, async (req, res) => {
   const comment = await database.getComment(Number(req.params.commentid));
   const user = await req.user;
-  const loggedIn = isLoggedIn(user);
   if (comment) {
-    await database.deleteComment(comment.id);
-    res.redirect("/");
+    const canEdit = comment.creator === user?.id;
+    if (canEdit) {
+      await database.deleteComment(comment.id);
+      res.status(200).json({ message: "Comment was successfully deleted." });
+    } else {
+      res
+        .status(403)
+        .json({ message: "Comment cannot be deleted (not original commenter)." });
+    }
   } else {
-    res.status(404);
-    res.render("individualPost", {
-      comment,
-      loggedIn,
-      user,
-      active: "none",
-    });
+    res
+      .status(404)
+      .json({ message: "Comment cannot be deleted (comment does not exist)." });
   }
 });
 
