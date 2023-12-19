@@ -1,6 +1,15 @@
-import { Paper, Title, ActionIcon, Text, Grid, Anchor, Divider } from "@mantine/core";
+import {
+  Paper,
+  Title,
+  ActionIcon,
+  Text,
+  Grid,
+  Anchor,
+  Divider,
+  Group,
+} from "@mantine/core";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import classes from "./PostCard.module.css";
 import axios from "axios";
 import DOMAIN from "../services/endpoint";
@@ -17,6 +26,8 @@ const PostCard = ({ post }: { post: any }) => {
   const [upState, setUpState] = useState(post.voteStatus === 1);
   const [downState, setDownState] = useState(post.voteStatus === -1);
   const [score, setScore] = useState(post.score);
+
+  const navigate = useNavigate();
 
   const handleVote = async (val: "up" | "down", postId: number) => {
     try {
@@ -38,6 +49,7 @@ const PostCard = ({ post }: { post: any }) => {
       <Grid align="Center">
         <Grid.Col span="content">
           <ActionIcon
+            size="sm"
             className={classes.button}
             color={upState ? "green" : "grey"}
             onClick={() => handleVote("up", post.id)}
@@ -52,6 +64,7 @@ const PostCard = ({ post }: { post: any }) => {
           </Text>
 
           <ActionIcon
+            size="sm"
             className={classes.button}
             color={downState ? "red" : "grey"}
             onClick={() => handleVote("down", post.id)}
@@ -63,26 +76,34 @@ const PostCard = ({ post }: { post: any }) => {
         </Grid.Col>
 
         <Grid.Col span="auto">
-          <Title order={2}>
-            <Link to={"/posts/show/" + post.id}>{post.title}</Link>
-          </Title>
-          <Link to={"/subgroups/" + post.subgroup}>
-            (subgroup.{post.subgroup})
-          </Link>
-          <Text>
-            Posted by <strong>{post.creator.uname}</strong> on{" "}
-            {new Date(post.timestamp).toString()}
+          <Group gap="xs">
+            <Anchor onClick={() => navigate("/posts/show/" + post.id)}>
+              <Title order={4}>{post.title}</Title>
+            </Anchor>
+            <Anchor onClick={() => navigate("/subgroups/" + post.subgroup)}>
+              (subgroup.{post.subgroup})
+            </Anchor>
+          </Group>
+          <Group gap="xs">
+            <Text c="dimmed" size="sm">
+              Posted by <strong>{post.creator.uname}</strong> on{" "}
+              {new Date(post.timestamp).toString()}
+            </Text>
             {canModifyPost ? (
               <>
-                {" "}
-                {" | "}
-                <Link to={""}>Edit Post</Link> |{" "}
-                <Anchor onClick={open}>Delete Post</Anchor>
+                <Divider orientation="vertical" />
+                <Anchor size="sm" onClick={() => navigate("/")}>
+                  Edit Post
+                </Anchor>
+                <Divider orientation="vertical" />
+                <Anchor size="sm" onClick={open}>
+                  Delete Post
+                </Anchor>
               </>
             ) : (
               <></>
             )}
-          </Text>
+          </Group>
         </Grid.Col>
       </Grid>
       <ConfirmDelete
@@ -91,7 +112,7 @@ const PostCard = ({ post }: { post: any }) => {
         openClose={{ open, close }}
         type="post"
       />
-      <Divider my="sm"/>
+      <Divider my="sm" />
     </Paper>
   );
 };

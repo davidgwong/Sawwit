@@ -1,4 +1,4 @@
-import { Container, Title, Text, SegmentedControl } from "@mantine/core";
+import { Container, Title, Text, SegmentedControl, Group } from "@mantine/core";
 import axios from "axios";
 import DOMAIN from "../services/endpoint";
 import { useLoaderData } from "react-router-dom";
@@ -32,15 +32,16 @@ const PostListPage = () => {
       <Title order={1} my="sm">
         Welcome to Sawwit, the face page of the internet.
       </Title>
-      <Text>Sort by:</Text>
-      <SegmentedControl
-        mb="sm"
-        radius="sm"
-        size="sm"
-        data={["Top", "Hot", "Controversial", "Date"]}
-        onChange={(value) => setSortBy(value)}
-        value={sortBy}
-      />
+      <Group gap="xs" mb="xs">
+        <Text>Sort by:</Text>
+        <SegmentedControl
+          radius="sm"
+          size="sm"
+          data={["Top", "Hot", "Controversial", "Date"]}
+          onChange={(value) => setSortBy(value)}
+          value={sortBy}
+        />
+      </Group>
       {sortPostBy(postData, sortBy).map((post: any) => (
         <PostCard post={post} key={post.id} />
       ))}

@@ -48,8 +48,8 @@ const IndividualPostPage = () => {
       <Paper withBorder p="sm">
         <Text mb="sm">{postData.description}</Text>
         <Group gap={5}>
-          <Text fw={700}>Link: </Text>
-          <Anchor href={postData.link}>{postData.link}</Anchor>{" "}
+          <Text fw={700}>Link:</Text>
+          <Anchor href={postData.link}>{postData.link}</Anchor>
         </Group>
       </Paper>
 
@@ -65,9 +65,8 @@ const IndividualPostPage = () => {
 
       {isAuthenticated ? (
         <form onSubmit={handleNewComment}>
-          <Text mt="sm">Add a comment</Text>
-          <Textarea {...form.getInputProps("comment")}></Textarea>
-          <Button type="submit" mt="sm">
+          <Textarea label="Add a comment" placeholder="Enter your comment here..." {...form.getInputProps("comment")}></Textarea>
+          <Button type="submit" mt="sm" variant="default">
             Add comment
           </Button>
         </form>
