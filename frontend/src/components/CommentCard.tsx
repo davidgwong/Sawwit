@@ -14,26 +14,31 @@ import { useForm } from "@mantine/form";
 import { useState } from "react";
 import axios from "axios";
 import DOMAIN from "../services/endpoint";
-import { useNavigate } from "react-router-dom";
 
 const CommentCard = ({ comment }: { comment: any }) => {
   const { userId } = useUser();
   const [opened, { open, close }] = useDisclosure(false);
   const [editState, setEditState] = useState(false);
+  const [commentDescription, setCommentDescription] = useState(
+    comment.description
+  );
   const form = useForm({
     initialValues: {
-      comment: comment.description,
+      comment: commentDescription,
     },
   });
-  const navigate = useNavigate();
 
   const handleEditSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await axios.post(`${DOMAIN}/comments/edit/` + comment.id, {
-        description: form.values.comment,
-      });
-      navigate(0);
+      const editCommentResponse = await axios.post(
+        `${DOMAIN}/comments/edit/` + comment.id,
+        {
+          description: form.values.comment,
+        }
+      );
+      setCommentDescription(editCommentResponse.data.description);
+      setEditState(false);
     } catch (err) {}
   };
 
@@ -54,7 +59,7 @@ const CommentCard = ({ comment }: { comment: any }) => {
           </Button>
         </form>
       ) : (
-        <Text>{comment.description}</Text>
+        <Text>{commentDescription}</Text>
       )}
 
       <Group gap="xs">

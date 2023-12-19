@@ -154,10 +154,9 @@ router.post("/edit/:commentid", ensureAuthenticated, async (req, res) => {
   console.log(incomingEdits);
   const user = await req.user;
   const commentId = req.params.commentid;
-  console.log(commentId);
   await database.editComment(Number(commentId), incomingEdits);
-  console.log(database.getComment(Number(commentId)));
-  res.sendStatus(200);
+  const comment = await database.getComment(Number(commentId));
+  res.status(200).json(comment);
 });
 
 router.get(
