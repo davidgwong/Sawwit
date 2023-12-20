@@ -7,8 +7,8 @@ import {
   Anchor,
   Divider,
   Group,
+  Stack,
 } from "@mantine/core";
-import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import classes from "./PostCard.module.css";
 import axios from "axios";
@@ -17,6 +17,7 @@ import { useUser } from "../store/store";
 import { useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import ConfirmDelete from "./ConfirmDelete";
+import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 
 const PostCard = ({ post }: { post: any }) => {
   const { isAuthenticated, userId } = useUser();
@@ -48,31 +49,48 @@ const PostCard = ({ post }: { post: any }) => {
     <Paper key={post.id}>
       <Grid align="Center">
         <Grid.Col span="content">
-          <ActionIcon
-            size="sm"
-            className={classes.button}
-            color={upState ? "green" : "grey"}
-            onClick={() => handleVote("up", post.id)}
-            disabled={!isAuthenticated}
-            id={"up" + post.id}
-          >
-            <FaChevronUp />
-          </ActionIcon>
+          <Stack gap={0}>
+            <ActionIcon
+              size="sm"
+              variant="default"
+              className={classes.button}
+              onClick={() => handleVote("up", post.id)}
+              disabled={!isAuthenticated}
+              style={{
+                backgroundColor: "transparent",
+                borderColor: "transparent",
+              }}
+              id={"down" + post.id}
+            >
+              <IconChevronUp
+                stroke={4}
+                id={"up" + post.id}
+                color={upState ? "orange" : "lightgrey"}
+              />
+            </ActionIcon>
 
-          <Text id={"score" + post.id} ta="center">
-            {score}
-          </Text>
+            <Text id={"score" + post.id} ta="center">
+              {score}
+            </Text>
 
-          <ActionIcon
-            size="sm"
-            className={classes.button}
-            color={downState ? "red" : "grey"}
-            onClick={() => handleVote("down", post.id)}
-            disabled={!isAuthenticated}
-            id={"down" + post.id}
-          >
-            <FaChevronDown />
-          </ActionIcon>
+            <ActionIcon
+              size="sm"
+              variant="default"
+              className={classes.button}
+              onClick={() => handleVote("down", post.id)}
+              disabled={!isAuthenticated}
+              style={{
+                backgroundColor: "transparent",
+                borderColor: "transparent",
+              }}
+              id={"down" + post.id}
+            >
+              <IconChevronDown
+                stroke={4}
+                color={downState ? "deepskyblue" : "lightgrey"}
+              />
+            </ActionIcon>
+          </Stack>
         </Grid.Col>
 
         <Grid.Col span="auto">
@@ -84,18 +102,22 @@ const PostCard = ({ post }: { post: any }) => {
               (subgroup.{post.subgroup})
             </Anchor>
           </Group>
-          <Group gap="xs">
+          <Group gap={5}>
             <Text c="dimmed" size="sm">
               Posted by <strong>{post.creator.uname}</strong> on{" "}
               {new Date(post.timestamp).toString()}
             </Text>
             {canModifyPost ? (
               <>
-                <Divider orientation="vertical" />
+                <Text c="dimmed" size="sm">
+                  |
+                </Text>
                 <Anchor size="sm" onClick={() => navigate("/")}>
                   Edit Post
                 </Anchor>
-                <Divider orientation="vertical" />
+                <Text c="dimmed" size="sm">
+                  |
+                </Text>
                 <Anchor size="sm" onClick={open}>
                   Delete Post
                 </Anchor>

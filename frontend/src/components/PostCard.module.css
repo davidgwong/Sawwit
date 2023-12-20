@@ -1,29 +1,7 @@
 .button {
   &:disabled,
   &[data-disabled] {
-    border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
-    background-color: transparent;
-    cursor: default;
-  }
-}
-
-.activeUp {
-  border-color: var(--mantine-color-green-6);
-  background-color: transparent;
-  &:disabled,
-  &[data-disabled] {
-    border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
-    background-color: transparent;
-    cursor: default;
-  }
-}
-
-.activeDown {
-  border-color: var(--mantine-color-red-6);
-  background-color: transparent;
-  &:disabled,
-  &[data-disabled] {
-    border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+    border-color: transparent;
     background-color: transparent;
     cursor: default;
   }

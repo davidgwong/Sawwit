@@ -48,18 +48,32 @@ const CommentCard = ({ comment }: { comment: any }) => {
 
   return (
     <Paper key={comment.id}>
-      <Group gap="xs">
+      {editState ? (
+        <form onSubmit={handleEditSubmit}>
+          <TextInput mb="sm" {...form.getInputProps("comment")} />{" "}
+          <Button variant="default" type="submit" mr="sm">
+            Update comment
+          </Button>
+          <Button variant="default" onClick={handleEditCancel}>
+            Cancel
+          </Button>
+        </form>
+      ) : (
+        <Text my="sm">{commentDescription}</Text>
+      )}
+
+      <Group gap={5}>
         <Text c="dimmed" size="sm">
           Commented by <strong>{comment.creator.uname}</strong> on{" "}
           {new Date(comment.timestamp).toString()}
         </Text>
         {userId === comment.creator.id ? (
           <>
-            <Divider orientation="vertical" />
+            <Text c="dimmed" size="sm">|</Text>
             <Anchor size="sm" onClick={() => setEditState(true)}>
               Edit
             </Anchor>
-            <Divider orientation="vertical" />
+            <Text c="dimmed" size="sm">|</Text>
             <Anchor size="sm" onClick={open}>
               Delete
             </Anchor>
@@ -74,21 +88,7 @@ const CommentCard = ({ comment }: { comment: any }) => {
           <></>
         )}
       </Group>
-
-      {editState ? (
-        <form onSubmit={handleEditSubmit}>
-          <TextInput mb="sm" {...form.getInputProps("comment")} />{" "}
-          <Button variant="default" type="submit" mr="sm">
-            Update comment
-          </Button>
-          <Button variant="default" onClick={handleEditCancel}>
-            Cancel
-          </Button>
-        </form>
-      ) : (
-        <Text my="sm">{commentDescription}</Text>
-      )}
-      <Divider my="sm" />
+      <Divider my="xs" />
     </Paper>
   );
 };
