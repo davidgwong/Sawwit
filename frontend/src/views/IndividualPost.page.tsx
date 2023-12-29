@@ -35,8 +35,9 @@ const IndividualPostPage = () => {
   const handleNewComment = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await axios.post(`${DOMAIN}/posts/comment-create/` + postData.id, {
+      await axios.post(`${DOMAIN}/posts/comment-create/` + postData._id, {
         newComment: form.values.comment,
+        postTitle: postData.title,
       });
     } catch (err) {}
     navigate(0);
@@ -46,7 +47,7 @@ const IndividualPostPage = () => {
     <Container>
       <PostCard post={postData} />
       <Paper withBorder p="sm">
-        <Text mb="sm">{postData.description}</Text>
+        <Text mb="sm">{postData.content}</Text>
         <Group gap={5}>
           <Text fw={700}>Link:</Text>
           <Anchor href={postData.link}>{postData.link}</Anchor>
@@ -60,7 +61,7 @@ const IndividualPostPage = () => {
       <Divider my="sm" />
 
       {postData.comments.map((comment: any) => (
-        <CommentCard key={comment.id} comment={comment} />
+        <CommentCard key={comment._id} comment={comment} />
       ))}
 
       {isAuthenticated ? (

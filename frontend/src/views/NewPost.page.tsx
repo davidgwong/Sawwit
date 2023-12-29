@@ -9,7 +9,7 @@ const NewPostPage = () => {
     initialValues: {
       title: "",
       link: "",
-      description: "",
+      content: "",
       subgroup: "",
     },
   });
@@ -49,11 +49,11 @@ const NewPostPage = () => {
           {...form.getInputProps("link")}
         />
         <Textarea
-          label="Description"
-          description="Description of new post"
-          placeholder="Add a description..."
+          label="Content"
+          description="Content of new post"
+          placeholder="Add content..."
           required
-          {...form.getInputProps("description")}
+          {...form.getInputProps("content")}
         />
         <Button type="submit" mt="xl">
           Create New Post

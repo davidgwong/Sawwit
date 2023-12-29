@@ -22,7 +22,7 @@ import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 const PostCard = ({ post }: { post: any }) => {
   const { isAuthenticated, userId } = useUser();
   const [opened, { open, close }] = useDisclosure(false);
-  const canModifyPost = userId === post.creator.id;
+  const canModifyPost = userId === post.creator_id;
 
   const [upState, setUpState] = useState(post.voteStatus === 1);
   const [downState, setDownState] = useState(post.voteStatus === -1);
@@ -30,12 +30,13 @@ const PostCard = ({ post }: { post: any }) => {
 
   const navigate = useNavigate();
 
-  const handleVote = async (val: "up" | "down", postId: number) => {
+  const handleVote = async (val: "up" | "down", postId: number, postTitle: string) => {
     try {
       const voteValue = val === "up" ? 1 : -1;
       const response: any = await axios.post(`${DOMAIN}/posts/vote/`, {
         voteValue: voteValue,
         postId: postId,
+        postTitle: postTitle,
       });
       setScore(response.data.score);
       setUpState(response.data.userVote == 1);
@@ -46,7 +47,7 @@ const PostCard = ({ post }: { post: any }) => {
   };
 
   return (
-    <Paper key={post.id}>
+    <Paper key={post._id}>
       <Grid align="Center">
         <Grid.Col span="content">
           <Stack gap={0}>
@@ -54,22 +55,22 @@ const PostCard = ({ post }: { post: any }) => {
               size="sm"
               variant="default"
               className={classes.button}
-              onClick={() => handleVote("up", post.id)}
+              onClick={() => handleVote("up", post._id, post.title)}
               disabled={!isAuthenticated}
               style={{
                 backgroundColor: "transparent",
                 borderColor: "transparent",
               }}
-              id={"down" + post.id}
+              id={"down" + post._id}
             >
               <IconChevronUp
                 stroke={4}
-                id={"up" + post.id}
+                id={"up" + post._id}
                 color={upState ? "orange" : "lightgrey"}
               />
             </ActionIcon>
 
-            <Text id={"score" + post.id} ta="center">
+            <Text id={"score" + post._id} ta="center">
               {score}
             </Text>
 
@@ -77,13 +78,13 @@ const PostCard = ({ post }: { post: any }) => {
               size="sm"
               variant="default"
               className={classes.button}
-              onClick={() => handleVote("down", post.id)}
+              onClick={() => handleVote("down", post._id, post.title)}
               disabled={!isAuthenticated}
               style={{
                 backgroundColor: "transparent",
                 borderColor: "transparent",
               }}
-              id={"down" + post.id}
+              id={"down" + post._id}
             >
               <IconChevronDown
                 stroke={4}
@@ -95,7 +96,7 @@ const PostCard = ({ post }: { post: any }) => {
 
         <Grid.Col span="auto">
           <Group gap="xs">
-            <Anchor onClick={() => navigate("/posts/show/" + post.id)}>
+            <Anchor onClick={() => navigate("/posts/show/" + post._id)}>
               <Title order={4}>{post.title}</Title>
             </Anchor>
             <Anchor onClick={() => navigate("/subgroups/" + post.subgroup)}>
@@ -104,7 +105,7 @@ const PostCard = ({ post }: { post: any }) => {
           </Group>
           <Group gap={5}>
             <Text c="dimmed" size="sm">
-              Posted by <strong>{post.creator.uname}</strong> on{" "}
+              Posted by <strong>{post.creator_username}</strong> on{" "}
               {new Date(post.timestamp).toString()}
             </Text>
             {canModifyPost ? (
@@ -129,7 +130,7 @@ const PostCard = ({ post }: { post: any }) => {
         </Grid.Col>
       </Grid>
       <ConfirmDelete
-        typeId={post.id}
+        typeId={post._id}
         opened={opened}
         openClose={{ open, close }}
         type="post"

@@ -4,8 +4,8 @@ import {
   Divider,
   Anchor,
   Group,
-  TextInput,
   Button,
+  Textarea,
 } from "@mantine/core";
 import ConfirmDelete from "./ConfirmDelete";
 import { useDisclosure } from "@mantine/hooks";
@@ -19,12 +19,10 @@ const CommentCard = ({ comment }: { comment: any }) => {
   const { userId } = useUser();
   const [opened, { open, close }] = useDisclosure(false);
   const [editState, setEditState] = useState(false);
-  const [commentDescription, setCommentDescription] = useState(
-    comment.description
-  );
+  const [commentContent, setCommentContent] = useState(comment.content);
   const form = useForm({
     initialValues: {
-      comment: commentDescription,
+      comment: commentContent,
     },
   });
 
@@ -32,12 +30,12 @@ const CommentCard = ({ comment }: { comment: any }) => {
     e.preventDefault();
     try {
       const editCommentResponse = await axios.post(
-        `${DOMAIN}/comments/edit/` + comment.id,
+        `${DOMAIN}/comments/edit/` + comment._id,
         {
-          description: form.values.comment,
+          content: form.values.comment,
         }
       );
-      setCommentDescription(editCommentResponse.data.description);
+      setCommentContent(editCommentResponse.data.content);
       setEditState(false);
     } catch (err) {}
   };
@@ -47,10 +45,10 @@ const CommentCard = ({ comment }: { comment: any }) => {
   };
 
   return (
-    <Paper key={comment.id}>
+    <Paper key={comment._id}>
       {editState ? (
         <form onSubmit={handleEditSubmit}>
-          <TextInput mb="sm" {...form.getInputProps("comment")} />{" "}
+          <Textarea mb="sm" {...form.getInputProps("comment")} autosize />{" "}
           <Button variant="default" type="submit" mr="sm">
             Update comment
           </Button>
@@ -59,26 +57,32 @@ const CommentCard = ({ comment }: { comment: any }) => {
           </Button>
         </form>
       ) : (
-        <Text my="sm">{commentDescription}</Text>
+        <Text my="sm" style={{ whiteSpace: "pre-line" }}>
+          {commentContent}
+        </Text>
       )}
 
       <Group gap={5}>
         <Text c="dimmed" size="sm">
-          Commented by <strong>{comment.creator.uname}</strong> on{" "}
+          Commented by <strong>{comment.creator_username}</strong> on{" "}
           {new Date(comment.timestamp).toString()}
         </Text>
-        {userId === comment.creator.id ? (
+        {userId === comment.creator_id ? (
           <>
-            <Text c="dimmed" size="sm">|</Text>
+            <Text c="dimmed" size="sm">
+              |
+            </Text>
             <Anchor size="sm" onClick={() => setEditState(true)}>
               Edit
             </Anchor>
-            <Text c="dimmed" size="sm">|</Text>
+            <Text c="dimmed" size="sm">
+              |
+            </Text>
             <Anchor size="sm" onClick={open}>
               Delete
             </Anchor>
             <ConfirmDelete
-              typeId={comment.id}
+              typeId={comment._id}
               opened={opened}
               openClose={{ open, close }}
               type="comment"

@@ -24,7 +24,7 @@ function sortPostBy(posts: any[], sortBy: string) {
 }
 
 const PostListPage = () => {
-  const postData = useLoaderData() as DecoratedPost[];
+  const postData = useLoaderData() as any[];
   const [sortBy, setSortBy] = useState("Date");
 
   return (
@@ -43,7 +43,7 @@ const PostListPage = () => {
         />
       </Group>
       {sortPostBy(postData, sortBy).map((post: any) => (
-        <PostCard post={post} key={post.id} />
+        <PostCard post={post} key={post._id} />
       ))}
     </Container>
   );
