@@ -1,164 +1,28 @@
 import express from "express";
-import * as database from "../controller/postController";
 const router = express.Router();
 import { ensureAuthenticated } from "../middleware/checkAuth";
-import { canEditPost, isLoggedIn } from "../utils/helperFunctions";
+import {
+  getPost,
+  getAllPosts,
+  createPost,
+  addVote,
+  deletePost,
+  addComment,
+  editPost,
+} from "../controller/postController";
 
-router.get("/", async (req, res) => {
-  let posts = await database.getPosts(20);
-  const user = await req.user;
-  posts = posts.map((post: DecoratedPost) => ({
-    ...post,
-    voteStatus:
-      post.votes.find((vote) => vote.user_id === user?.id)?.value || 0,
-  }));
-  res.json(posts);
-});
+router.get("/", getAllPosts);
 
-router.get("/create", ensureAuthenticated, async (req, res) => {
-  const user = await req.user;
-  res.render("createPosts", { user, active: "create" });
-});
+router.post("/create", ensureAuthenticated, createPost);
 
-router.post("/create", ensureAuthenticated, async (req, res) => {
-  const newPost = await req.body;
-  const creator = await Promise.resolve(req.user).then((user) => user!.id);
-  const title = newPost.title;
-  const link = newPost.link;
-  const description = newPost.description;
-  const subgroup = newPost.subgroup;
-  const createdPost = await database.createPost(
-    title,
-    link,
-    creator,
-    description,
-    subgroup
-  );
-  res.status(200).json({ postId: createdPost.id });
-});
+router.get("/show/:postid", getPost);
 
-router.get("/show/:postid", async (req, res) => {
-  const postId = Number(req.params.postid);
-  const post = await database.getPost(postId);
-  const user = await req.user;
+router.post("/edit/:postid", ensureAuthenticated, editPost);
 
-  if (post) {
-    const postAuthView = {
-      ...post,
-      voteStatus:
-        post?.votes.find((vote) => vote.user_id === user?.id)?.value || 0,
-    };
-    res.json(postAuthView);
-  } else {
-    res.status(404);
-    res.json(post);
-  }
-});
+router.post("/delete/:postid", ensureAuthenticated, deletePost);
 
-router.get("/edit/:postid", ensureAuthenticated, async (req, res) => {
-  const post = await database.getPost(Number(req.params.postid));
-  const user = await req.user;
-  const loggedIn = isLoggedIn(user);
-  if (post) {
-    const canEdit = canEditPost(post, user);
-    if (canEdit) res.render("editPost", { post, user, active: "none" });
-    else res.redirect("/");
-  } else {
-    res.status(404);
-    res.render("individualPost", {
-      post,
-      loggedIn,
-      user,
-      active: "none",
-    });
-  }
-});
+router.post("/comment-create/:postid", ensureAuthenticated, addComment);
 
-router.post("/edit/:postid", ensureAuthenticated, async (req, res) => {
-  const incomingEdits = await req.body;
-  const user = await req.user;
-  const postId = Number(req.params.postid);
-  if (await database.editPost(postId, user!.id, incomingEdits)) {
-    res.status(200);
-    res.redirect("/posts/show/" + postId);
-  } else {
-    res.status(403);
-    res.redirect("/posts/show/" + postId);
-  }
-});
-
-router.get("/deleteconfirm/:postid", ensureAuthenticated, async (req, res) => {
-  const post = await database.getPost(Number(req.params.postid));
-  const user = await req.user;
-  const loggedIn = isLoggedIn(user);
-  if (post) {
-    const canEdit = canEditPost(post, user);
-    if (canEdit) res.render("deletePosts", { post, user, active: "none" });
-    else res.redirect("/");
-  } else {
-    res.status(404);
-    res.render("individualPost", {
-      user,
-      post,
-      loggedIn,
-      active: "none",
-    });
-  }
-  // ⭐ TODO
-});
-
-router.post("/delete/:postid", ensureAuthenticated, async (req, res) => {
-  const post = await database.getPost(Number(req.params.postid));
-  const user = await req.user;
-  if (post) {
-    const canEdit = canEditPost(post, user);
-    if (canEdit) {
-      await database.deletePost(post.id);
-      res.status(200).json({ message: "Post was successfully deleted." });
-    } else {
-      res
-        .status(403)
-        .json({ message: "Post cannot be deleted (not original poster)." });
-    }
-  } else {
-    res
-      .status(404)
-      .json({ message: "Post cannot be deleted (post does not exist)." });
-  }
-});
-
-router.post(
-  "/comment-create/:postid",
-  ensureAuthenticated,
-  async (req, res) => {
-    const incomingComment = await req.body.newComment;
-    const user = await req.user;
-    const postId = Number(req.params.postid);
-    const addedComment = await database.addComment(
-      postId,
-      user!.id,
-      incomingComment
-    );
-    if (incomingComment == addedComment.description) {
-      res.sendStatus(200);
-    } else {
-      res.sendStatus(500);
-    }
-  }
-);
-
-router.post("/vote/", ensureAuthenticated, async (req, res) => {
-  const user_id = await req.user;
-  const post_id = await req.body.postId;
-  const value = await req.body.voteValue;
-  await database.addVote(Number(user_id!.id), Number(post_id), Number(value));
-  res.setHeader("Content-Type", "application/json");
-  res.status(200);
-  const post = await database.getPost(post_id);
-  const userVote = post?.votes.find(
-    (val) => val.user_id === Number(user_id!.id)
-  );
-  res.json({ score: post!.score, userVote: userVote?.value });
-});
+router.post("/vote/", ensureAuthenticated, addVote);
 
 export default router;
