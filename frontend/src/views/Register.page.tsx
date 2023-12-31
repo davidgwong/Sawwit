@@ -19,7 +19,7 @@ import { useState } from "react";
 const RegisterPage = () => {
   const form = useForm({
     initialValues: {
-      uname: "",
+      username: "",
       password: "",
     },
   });
@@ -94,7 +94,7 @@ const RegisterPage = () => {
             label="Username"
             placeholder="Your username"
             required
-            {...form.getInputProps("uname")}
+            {...form.getInputProps("username")}
           />
           <PasswordInput
             label="Password"
