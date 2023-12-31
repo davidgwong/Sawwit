@@ -1,10 +1,10 @@
-import * as db from "../fake-db";
+import { User } from "../models/users";
 
 export const getUserByEmailIdAndPassword = async (
-  uname: string,
+  username: string,
   password: string
 ) => {
-  let user = db.getUserByUsername(uname);
+  const user = await User.findOne({ username: username });
   if (user) {
     if (user.password === password) {
       return user;
@@ -14,22 +14,32 @@ export const getUserByEmailIdAndPassword = async (
   }
 };
 
-export const getUserById = async (id: number) => {
-  let user = db.getUser(id);
+export const getUserById = async (id: string) => {
+  const user = await User.findById(id);
   if (user) {
     return user;
   }
   return null;
 };
 
-export async function createUser(uname: string, password: string) {
-  return db.addUser(uname, password)
-}
+export const createUser = async (username: string, password: string) => {
+  try {
+    const newUser = new User({
+      username: username,
+      password: password,
+    });
 
-export const getUserByUsername = async (uname: string) => {
-  let user = db.getUserByUsername(uname);
+    const savedUser = await newUser.save();
+    return savedUser;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const getUserByUsername = async (username: string) => {
+  const user = await User.findOne({ username: username });
   if (user) {
     return user;
   }
   return null;
-}; 
+};
