@@ -52,6 +52,7 @@ const NewPostPage = () => {
           label="Content"
           description="Content of new post"
           placeholder="Add content..."
+          autosize
           required
           {...form.getInputProps("content")}
         />

@@ -10,6 +10,7 @@ import {
   Group,
   Divider,
   Paper,
+  Space,
 } from "@mantine/core";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import NotFound from "./NotFound.page";
@@ -47,7 +48,8 @@ const IndividualPostPage = () => {
     <Container>
       <PostCard post={postData} />
       <Paper withBorder p="sm">
-        <Text mb="sm">{postData.content}</Text>
+        <Text style={{ whiteSpace: "pre-line" }}>{postData.content}</Text>
+        <Space h="md" />
         <Group gap={5}>
           <Text fw={700}>Link:</Text>
           <Anchor href={postData.link}>{postData.link}</Anchor>
@@ -66,7 +68,12 @@ const IndividualPostPage = () => {
 
       {isAuthenticated ? (
         <form onSubmit={handleNewComment}>
-          <Textarea label="Add a comment" placeholder="Enter your comment here..." {...form.getInputProps("comment")}></Textarea>
+          <Textarea
+            label="Add a comment"
+            placeholder="Enter your comment here..."
+            autosize
+            {...form.getInputProps("comment")}
+          ></Textarea>
           <Button type="submit" mt="sm" variant="default">
             Add comment
           </Button>

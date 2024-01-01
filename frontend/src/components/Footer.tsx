@@ -1,4 +1,4 @@
-import { Divider, Text } from "@mantine/core";
+import { Divider, Space, Text } from "@mantine/core";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -11,6 +11,7 @@ export default function Footer() {
       <Text size="xs" c="dimmed" ta="center">
         Ⓚ {currentYear} All rights reversed.{" "}
       </Text>
+      <Space h="md" />
     </>
   );
 }
