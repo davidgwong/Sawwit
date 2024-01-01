@@ -6,10 +6,7 @@ import {
 } from "react-router-dom";
 
 import LoginPage from "../views/Login.page";
-import PostListPage, {
-  allPostsLoader,
-  subgroupPostsLoader,
-} from "../views/PostList.page";
+import PostListPage from "../views/AllPostList.page";
 import Layout from "./Layout";
 import NotFound from "../views/NotFound.page";
 import RegisterPage from "../views/Register.page";
@@ -22,6 +19,7 @@ import NewPostPage from "../views/NewPost.page";
 import ProtectedRoute from "../services/ProtectedRoute";
 import { useUser } from "../store/store";
 import DeletePostPage, { deletePostLoader } from "../views/DeletePost.page";
+import SubgroupPostListPage from "../views/SubgroupPostList.page";
 
 const BrowserRouter = () => {
   const { isAuthenticated } = useUser();
@@ -43,7 +41,7 @@ const BrowserRouter = () => {
   const router = createHashRouter(
     createRoutesFromElements(
       <Route element={<Layout />}>
-        <Route path="/" element={<PostListPage />} loader={allPostsLoader} />
+        <Route path="/" element={<PostListPage />} />
         <Route
           path="/newpost"
           element={
@@ -90,11 +88,7 @@ const BrowserRouter = () => {
           element={<SubgroupsPage />}
           loader={subgroupsLoader}
         />
-        <Route
-          path="/subgroups/:subname"
-          element={<PostListPage />}
-          loader={subgroupPostsLoader}
-        />
+        <Route path="/subgroups/:subname" element={<SubgroupPostListPage />} />
         <Route
           path="/posts/show/:id"
           element={<IndividualPostPage />}

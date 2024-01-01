@@ -23,7 +23,7 @@ const SubgroupsPage = () => {
 };
 
 export const subgroupsLoader = async () => {
-  const res = await axios.get(`${DOMAIN}/subs/list`);
+  const res = await axios.get(`${DOMAIN}/subgroups/list`);
   return res.data;
 };
 
