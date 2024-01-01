@@ -113,7 +113,7 @@ const PostCard = ({ post }: { post: any }) => {
                 <Text c="dimmed" size="sm">
                   |
                 </Text>
-                <Anchor size="sm" onClick={() => navigate("/")}>
+                <Anchor size="sm" onClick={() => navigate("/posts/edit/" + post._id)}>
                   Edit Post
                 </Anchor>
                 <Text c="dimmed" size="sm">
