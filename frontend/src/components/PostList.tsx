@@ -6,6 +6,7 @@ import {
   Group,
   Pagination,
   Center,
+  Loader,
 } from "@mantine/core";
 import axios from "axios";
 import DOMAIN from "../services/endpoint";
@@ -25,6 +26,7 @@ const PostList = () => {
   const [pages, setPages] = useState(0);
   const [sortBy, setSortBy] = useState("Date");
   const [activePage, setActivePage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   const currentPath = useLocation().pathname;
   const endpoint =
@@ -41,6 +43,7 @@ const PostList = () => {
   useEffect(() => {
     const getPost = async () => {
       try {
+        setLoading(true);
         const requestData = {
           pageNumber: activePage.toString(),
           sortBy: sortBy,
@@ -49,7 +52,10 @@ const PostList = () => {
         const res = await axios.get<postResponse>(endpoint + `?${queryParams}`);
         setPosts(res.data.posts);
         setPages(Number(res.data.pages));
-      } catch (err) {}
+      } catch (err) {
+      } finally {
+        setLoading(false);
+      }
     };
     getPost();
   }, [activePage, sortBy]);
@@ -69,18 +75,26 @@ const PostList = () => {
           value={sortBy}
         />
       </Group>
-      {posts.map((post: any) => (
-        <PostCard post={post} key={post._id} />
-      ))}
-      <Center>
-        <Pagination
-          value={activePage}
-          total={pages}
-          boundaries={2}
-          siblings={2}
-          onChange={handlePageChange}
-        />
-      </Center>
+      {loading ? (
+        <Center>
+          <Loader />
+        </Center>
+      ) : (
+        <>
+          {posts.map((post: any) => (
+            <PostCard post={post} key={post._id} />
+          ))}
+          <Center>
+            <Pagination
+              value={activePage}
+              total={pages}
+              boundaries={2}
+              siblings={2}
+              onChange={handlePageChange}
+            />
+          </Center>
+        </>
+      )}
     </Container>
   );
 };
