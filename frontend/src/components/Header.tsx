@@ -74,9 +74,9 @@ export default function Header() {
           {items}
         </Group>
         {isAuthenticated ? (
-          <Text>Welcome {username}</Text>
+          <Text size="sm">Welcome {username}</Text>
         ) : (
-          <Text>Not logged in.</Text>
+          <Text size="sm">Logged out.</Text>
         )}
         <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
       </Container>

@@ -1,6 +1,7 @@
 import { Divider, Text } from "@mantine/core";
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
   return (
     <>
       <Divider mt={50} mb="sm" />
@@ -8,7 +9,7 @@ export default function Footer() {
         Sawwit, the Face Page of the Internet.
       </Text>
       <Text size="xs" c="dimmed" ta="center">
-        Ⓚ 2023 All rights reversed.{" "}
+        Ⓚ {currentYear} All rights reversed.{" "}
       </Text>
     </>
   );
