@@ -5,22 +5,21 @@ const router = express.Router();
 
 router.get("/", checkAuthenticated, async (req, res) => {
   const user = await req.user;
-  const username = user?.uname;
-  const userId = user?.id;
-  console.log("route /auth username and userid: " + username + " " + userId);
+  const username = user?.username;
+  const userId = user?._id;
   res.json({ isAuthenticated: req.isAuthenticated(), username: username, userId: userId });
 });
 
 router.get("/login", forwardAuthenticated, async (req, res) => {
   const user = await req.user;
-  const username = user?.uname;
-  const userId = user?.id;
+  const username = user?.username;
+  const userId = user?._id;
   res.json({ isAuthenticated: req.isAuthenticated(), username: username });
 });
 
 router.post("/login", passport.authenticate("local"), async (req, res) => {
-  const username = await req.user?.uname;
-  const userId = await req.user?.id;
+  const username = await req.user?.username;
+  const userId = await req.user?._id;
   res.status(200).json({ isAuthenticated: req.isAuthenticated(), username: username, userId: userId });
 });
 
@@ -31,9 +30,8 @@ router.post("/logout", async (req, res, next) => {
     }
   });
   const user = await req.user;
-  const username = user?.uname;
-  const userId = user?.id;
-  console.log("route /auth/logout username and userid: " + username + " " + userId);
+  const username = user?.username;
+  const userId = user?._id;
   res.status(200).json({ isAuthenticated: req.isAuthenticated(), username: username, userId: userId });
 });
 

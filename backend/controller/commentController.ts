@@ -1,45 +1,51 @@
-import * as db from "../fake-db";
+import { Comment } from "../models/comments";
+import { Request, Response } from "express";
 
-async function getComment(commentId: number) {
-  return db.getComment(commentId);
-}
+const editComment = async (req: Request, res: Response) => {
+  const incomingEdits = await req.body;
+  const user = await req.user;
+  const commentId = req.params.commentid;
+  const updateData = {
+    content: incomingEdits.content,
+  };
 
-async function editComment(
-  commentId: number,
-  changes: {
-    description?: string;
+  try {
+    const comment = await Comment.findById(commentId);
+    if (comment?.creator_id.toString() === user?._id.toString()) {
+      const editCommentResult = await Comment.findByIdAndUpdate(
+        commentId,
+        updateData,
+        {
+          new: true,
+        }
+      );
+      res.status(200).json({ content: incomingEdits.content });
+    } else {
+      res
+        .status(403)
+        .json({ message: "Post cannot be edited (not original poster)." });
+    }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
-) {
-  return db.editComment(commentId, changes);
-}
+};
 
-async function deleteComment(id: number) {
-  return db.deleteComment(id)
-}
-
-async function getReplies(commentId: number) {
-  return db.getReplies(commentId);
-}
-
-async function addReply(commentId: number, userId: number, comment: string) {
-  return db.addReply(commentId, userId, comment);
-}
-
-async function getReply(replyId: number) {
-  return db.getReply(replyId);
-}
-
-async function deleteReply(replyId: number) {
-  return db.deleteReply(replyId);
-}
-
-async function editReply(
-  replyId: number,
-  changes: {
-    description?: string;
+const deleteComment = async (req: Request, res: Response) => {
+  const commentId = req.params.commentid;
+  const user = await req.user;
+  try {
+    const comment = await Comment.findById(commentId);
+    if (comment?.creator_id.toString() === user?._id.toString()) {
+      const deleteCommentResult = await Comment.findByIdAndDelete(commentId);
+      res.status(200).json({ message: "Comment was successfully deleted." });
+    } else {
+      res
+        .status(403)
+        .json({ message: "Comment cannot be deleted (not original poster)." });
+    }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
-) {
-  return db.editReply(replyId, changes);
-}
+};
 
-export { getComment, editComment, deleteComment, getReplies, addReply, getReply, deleteReply, editReply, };
+export { editComment, deleteComment };

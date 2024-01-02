@@ -9,7 +9,7 @@ export const getUserByEmailIdAndPassword = async (
   const user = await User.findOne({ username: { $regex: regex } });
   if (user) {
     if (user.password === password) {
-      return user;
+      return user as Express.User;
     } else {
       return null;
     }

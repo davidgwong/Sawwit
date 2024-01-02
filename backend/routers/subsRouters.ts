@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.get("/list", getSubs);
 
-router.get("/show/:subname", getPostsInSubgroup);
+router.get("/:subname", getPostsInSubgroup);
 
 export default router;

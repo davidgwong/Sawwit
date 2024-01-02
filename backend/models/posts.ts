@@ -10,6 +10,8 @@ const PostSchema = new Schema<Post>({
   subgroup: { type: String, required: true },
   timestamp: { type: Number, required: true },
   title: { type: String, required: true },
+  score: { type: Number, required: true },
+  votes: { type: Number, required: true },
 });
 
 PostSchema.virtual("id").get(function () {

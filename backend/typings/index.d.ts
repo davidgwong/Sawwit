@@ -40,10 +40,12 @@ declare global {
     subgroup: string;
     timestamp: number;
     _id: Schema.Types.ObjectId;
+    score: number;
+    votes: number;
+    hotness: number;
   }
 
   interface DecoratedPost extends Post {
-    votes: Vote[];
     comments: Comment[];
     score: number;
     voteStatus: number;
