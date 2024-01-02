@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Container, Burger, Group, Text } from "@mantine/core";
+import { Container, Burger, Group, Text, Drawer, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import classes from "./Header.module.css";
 import { NavLink } from "react-router-dom";
@@ -78,7 +78,22 @@ export default function Header() {
         ) : (
           <Text size="sm">Logged out.</Text>
         )}
+
         <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
+        <Drawer
+          opened={opened}
+          onClose={toggle}
+          size="xs"
+          position="top"
+          hiddenFrom="xs"
+        >
+          <Group mb="md">
+            <img className={classes.icon} src="./sawwit.svg" /> <b>Sawwit</b>
+          </Group>
+          <Stack gap={5} onClick={toggle}>
+            {items}
+          </Stack>
+        </Drawer>
       </Container>
     </header>
   );
