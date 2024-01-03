@@ -18,7 +18,6 @@ import LogoutPage from "../views/Logout.page";
 import NewPostPage from "../views/NewPost.page";
 import ProtectedRoute from "../services/ProtectedRoute";
 import { useUser } from "../store/store";
-import DeletePostPage, { deletePostLoader } from "../views/DeletePost.page";
 import SubgroupPostListPage from "../views/SubgroupPostList.page";
 import EditPostPage, { editPostLoader } from "../views/EditPost.page";
 
@@ -44,9 +43,8 @@ const BrowserRouter = () => {
       <Route element={<Layout />}>
         <Route path="/" element={<PostListPage />} />
         <Route path="/newpost" element={ <ProtectedRoute isAllowed={isAuthenticated}> <NewPostPage /> </ProtectedRoute> } />
-        <Route path="/posts/delete/:id" element={ <ProtectedRoute isAllowed={isAuthenticated}> <DeletePostPage /> </ProtectedRoute> } loader={deletePostLoader} />
         <Route path="login" element={ <ProtectedRoute isAllowed={!isAuthenticated} redirectPath="/"> <LoginPage /> </ProtectedRoute> } />
-        <Route path="logout" element={ <ProtectedRoute isAllowed={isAuthenticated} redirectPath="/"> <LogoutPage /> </ProtectedRoute> } />
+        <Route path="logout" element={<LogoutPage /> } />
         <Route path="register" element={ <ProtectedRoute isAllowed={!isAuthenticated} redirectPath="/"> <RegisterPage /> </ProtectedRoute> } />
         <Route path="subgroups" element={<SubgroupsPage />} loader={subgroupsLoader} />
         <Route path="/subgroups/:subname" element={<SubgroupPostListPage />} />

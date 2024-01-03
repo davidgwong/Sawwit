@@ -1,73 +1,110 @@
-import { Button, Container, TextInput, Textarea } from "@mantine/core";
+import {
+  Button,
+  Center,
+  Container,
+  Loader,
+  TextInput,
+  Textarea,
+} from "@mantine/core";
 import axios from "axios";
 import DOMAIN from "../services/endpoint";
 import { useForm } from "@mantine/form";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import {
+  useLoaderData,
+  useNavigate,
+  defer,
+  Await,
+  useLocation,
+  useAsyncValue,
+} from "react-router-dom";
+import { Suspense } from "react";
 
-const EditPostPage = () => {
-  const loaderData = useLoaderData() as DecoratedPost;
+const EditForm = () => {
+  const res = useAsyncValue() as any;
+
   const form = useForm({
     initialValues: {
-      title: loaderData.title,
-      link: loaderData.link,
-      content: loaderData.content,
-      subgroup: loaderData.subgroup,
+      title: res.data.title,
+      link: res.data.link,
+      content: res.data.content,
+      subgroup: res.data.subgroup,
     },
   });
 
   const navigate = useNavigate();
 
-  const handleCreateNewPost = async (e: any) => {
+  const location = useLocation();
+  const pathnameParts = location.pathname.split("/");
+  const postId = pathnameParts[pathnameParts.length - 1];
+
+  const handleEditPost = async (e: any) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${DOMAIN}/posts/edit/`+loaderData._id, form.values);
-      navigate("/posts/show/" + loaderData._id);
+      await axios.post(`${DOMAIN}/posts/edit/` + postId, form.values);
+      navigate("/posts/show/" + postId);
     } catch (err) {}
   };
+  return (
+    <form onSubmit={handleEditPost}>
+      <TextInput
+        label="Title"
+        description="Title of post"
+        placeholder="Enter a title..."
+        required
+        {...form.getInputProps("title")}
+      />
+      <TextInput
+        label="subgroup"
+        description="subgroup of post"
+        placeholder="Enter the subgroup..."
+        required
+        {...form.getInputProps("subgroup")}
+      />
+      <TextInput
+        label="Link"
+        description="Link of post"
+        placeholder="Add a link..."
+        required
+        {...form.getInputProps("link")}
+      />
+      <Textarea
+        label="Content"
+        description="Content of post"
+        placeholder="Add content..."
+        autosize
+        required
+        {...form.getInputProps("content")}
+      />
+      <Button type="submit" mt="xl">
+        Edit Post
+      </Button>
+    </form>
+  );
+};
+
+const EditPostPage = () => {
+  const loaderData = useLoaderData() as any;
 
   return (
     <Container>
-      <form onSubmit={handleCreateNewPost}>
-        <TextInput
-          label="Title"
-          description="Title of new post"
-          placeholder="Enter a title..."
-          required
-          {...form.getInputProps("title")}
-        />
-        <TextInput
-          label="subgroup"
-          description="subgroup of new post"
-          placeholder="Enter the subgroup..."
-          required
-          {...form.getInputProps("subgroup")}
-        />
-        <TextInput
-          label="Link"
-          description="Link of new post"
-          placeholder="Add a link..."
-          required
-          {...form.getInputProps("link")}
-        />
-        <Textarea
-          label="Content"
-          description="Content of new post"
-          placeholder="Add content..."
-          autosize
-          required
-          {...form.getInputProps("content")}
-        />
-        <Button type="submit" mt="xl">
-          Edit Post
-        </Button>
-      </form>
+      <Suspense
+        fallback={
+          <Center>
+            <Loader />
+          </Center>
+        }
+      >
+        <Await resolve={loaderData.res} errorElement={<p>Error...</p>}>
+          <EditForm />
+        </Await>
+      </Suspense>
     </Container>
   );
 };
 
-export const editPostLoader = async ({ params }: { params: any }) => {
-  const res = await axios.get(`${DOMAIN}/posts/show/${params.id}`);
-  return res.data;
+export const editPostLoader = ({ params }: { params: any }) => {
+  const resPromise = axios.get(`${DOMAIN}/posts/show/${params.id}`);
+  return defer({ res: resPromise });
 };
 
 export default EditPostPage;

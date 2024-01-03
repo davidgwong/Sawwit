@@ -17,3 +17,13 @@ export const useUser = create<UserState>((set) => ({
   setUserId: (userId: number | null) => set({ userId: userId }),
   setAuthenticated: (state: boolean) => set({ isAuthenticated: state }),
 }));
+
+interface GetPostState {
+  getPostTrigger: boolean;
+  flipPostTrigger: (state: boolean) => void;
+}
+
+export const useGetPostTrigger = create<GetPostState>((set) => ({
+  getPostTrigger: true,
+  flipPostTrigger: (state: boolean) => set({getPostTrigger: state}),
+}))

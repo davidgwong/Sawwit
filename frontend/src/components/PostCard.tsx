@@ -16,10 +16,14 @@ import DOMAIN from "../services/endpoint";
 import { useUser } from "../store/store";
 import { useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
-import ConfirmDelete from "./ConfirmDelete";
+import ConfirmDeletePost from "./ConfirmDeletePost";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 
-const PostCard = ({ post }: { post: any }) => {
+const PostCard = ({
+  post,
+}: {
+  post: any;
+}) => {
   const { isAuthenticated, userId } = useUser();
   const [opened, { open, close }] = useDisclosure(false);
   const canModifyPost = userId === post.creator_id;
@@ -30,7 +34,11 @@ const PostCard = ({ post }: { post: any }) => {
 
   const navigate = useNavigate();
 
-  const handleVote = async (val: "up" | "down", postId: number, postTitle: string) => {
+  const handleVote = async (
+    val: "up" | "down",
+    postId: number,
+    postTitle: string
+  ) => {
     try {
       const voteValue = val === "up" ? 1 : -1;
       const response: any = await axios.post(`${DOMAIN}/posts/vote/`, {
@@ -113,7 +121,10 @@ const PostCard = ({ post }: { post: any }) => {
                 <Text c="dimmed" size="sm">
                   |
                 </Text>
-                <Anchor size="sm" onClick={() => navigate("/posts/edit/" + post._id)}>
+                <Anchor
+                  size="sm"
+                  onClick={() => navigate("/posts/edit/" + post._id)}
+                >
                   Edit Post
                 </Anchor>
                 <Text c="dimmed" size="sm">
@@ -129,11 +140,10 @@ const PostCard = ({ post }: { post: any }) => {
           </Group>
         </Grid.Col>
       </Grid>
-      <ConfirmDelete
+      <ConfirmDeletePost
         typeId={post._id}
         opened={opened}
         openClose={{ open, close }}
-        type="post"
       />
       <Divider my="sm" />
     </Paper>

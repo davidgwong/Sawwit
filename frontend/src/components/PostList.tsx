@@ -13,6 +13,7 @@ import DOMAIN from "../services/endpoint";
 import { useEffect, useState } from "react";
 import PostCard from "../components/PostCard";
 import { useLocation } from "react-router-dom";
+import { useGetPostTrigger } from "../store/store";
 
 axios.defaults.withCredentials = true;
 
@@ -27,10 +28,14 @@ const PostList = () => {
   const [sortBy, setSortBy] = useState("Date");
   const [activePage, setActivePage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const { getPostTrigger} = useGetPostTrigger();
 
   const currentPath = useLocation().pathname;
   const endpoint =
     currentPath == "/" ? `${DOMAIN}/posts` : `${DOMAIN}` + currentPath;
+
+  const pathnameParts = useLocation().pathname.split("/");
+  const pathId = pathnameParts[pathnameParts.length - 1];
 
   const handlePageChange = async (pageNumber: number) => {
     setActivePage(pageNumber);
@@ -58,13 +63,14 @@ const PostList = () => {
       }
     };
     getPost();
-  }, [activePage, sortBy]);
+  }, [activePage, sortBy, getPostTrigger]);
 
   return (
     <Container>
       <Title order={1} my="sm">
         Welcome to Sawwit, the face page of the internet.
       </Title>
+
       <Group gap="xs" mb="xs">
         <Text>Sort by:</Text>
         <SegmentedControl
@@ -75,14 +81,23 @@ const PostList = () => {
           value={sortBy}
         />
       </Group>
+
       {loading ? (
         <Center>
           <Loader />
         </Center>
       ) : (
         <>
+          <Text my="sm">
+            {currentPath == "/"
+              ? "Showing posts from all subgroups"
+              : `Showing posts from ${pathId} subgroup`}
+          </Text>
           {posts.map((post: any) => (
-            <PostCard post={post} key={post._id} />
+            <PostCard
+              post={post}
+              key={post._id}
+            />
           ))}
           <Center>
             <Pagination
