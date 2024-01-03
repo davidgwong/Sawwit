@@ -115,7 +115,7 @@ const EditPostPage = () => {
   );
 };
 
-export const editPostLoader = ({ params }: { params: { id: string } }) => {
+export const editPostLoader = ({ params }: { params: any }) => {
   const resPromise: Promise<AxiosResponse<DecoratedPost>> = axios.get(
     `${DOMAIN}/posts/show/${params.id}`
   );

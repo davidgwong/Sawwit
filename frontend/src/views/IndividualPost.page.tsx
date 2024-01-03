@@ -138,7 +138,7 @@ const IndividualPostPage = () => {
   );
 };
 
-export const individualPostLoader = ({ params }: { params: {id: string} }) => {
+export const individualPostLoader = ({ params }: { params: any }) => {
   const resPromise: Promise<AxiosResponse<DecoratedPost>> = axios.get(
     `${DOMAIN}/posts/show/${params.id}`
   );
