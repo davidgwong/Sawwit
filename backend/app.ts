@@ -25,6 +25,13 @@ app.use(
   })
 );
 
+const RateLimit = require("express-rate-limit");
+const limiter = RateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 20,
+});
+app.use(limiter);
+
 import authRoute from "./routers/authRoute";
 import postsRoute from "./routers/postRouters";
 import subsRouters from "./routers/subsRouters";
