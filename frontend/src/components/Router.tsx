@@ -2,9 +2,8 @@ import {
   Route,
   createRoutesFromElements,
   RouterProvider,
-  createHashRouter,
+  createBrowserRouter,
 } from "react-router-dom";
-
 import LoginPage from "../views/Login.page";
 import PostListPage from "../views/AllPostList.page";
 import Layout from "./Layout";
@@ -24,27 +23,13 @@ import EditPostPage, { editPostLoader } from "../views/EditPost.page";
 const BrowserRouter = () => {
   const { isAuthenticated } = useUser();
 
-  /*
-   * "/" - Root. Redirects to "/posts"
-   * "/posts?sortBy"
-   * "/posts/create"
-   * "/posts/show/:id"
-   * "/posts/edit/:id"
-   * "/posts/deleteconfirm/:id"
-   * "/subs/list"
-   * "/subs/show/:id?sortBy"
-   * "/auth/login"
-   * "/auth/logout"
-   * "/register"
-   */
-
-  const router = createHashRouter(
+  const router = createBrowserRouter(
     createRoutesFromElements(
       <Route element={<Layout />}>
         <Route path="/" element={<PostListPage />} />
         <Route path="/newpost" element={ <ProtectedRoute isAllowed={isAuthenticated}> <NewPostPage /> </ProtectedRoute> } />
         <Route path="login" element={ <ProtectedRoute isAllowed={!isAuthenticated} redirectPath="/"> <LoginPage /> </ProtectedRoute> } />
-        <Route path="logout" element={<LogoutPage /> } />
+        <Route path="logout" element={ <LogoutPage /> } />
         <Route path="register" element={ <ProtectedRoute isAllowed={!isAuthenticated} redirectPath="/"> <RegisterPage /> </ProtectedRoute> } />
         <Route path="subgroups" element={<SubgroupsPage />} loader={subgroupsLoader} />
         <Route path="/subgroups/:subname" element={<SubgroupPostListPage />} />
