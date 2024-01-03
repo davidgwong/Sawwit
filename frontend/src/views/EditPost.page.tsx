@@ -1,12 +1,14 @@
 import {
+  Box,
   Button,
   Center,
   Container,
   Loader,
+  LoadingOverlay,
   TextInput,
   Textarea,
 } from "@mantine/core";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import DOMAIN from "../services/endpoint";
 import { useForm } from "@mantine/form";
 import {
@@ -17,10 +19,10 @@ import {
   useLocation,
   useAsyncValue,
 } from "react-router-dom";
-import { Suspense } from "react";
+import { FormEvent, Suspense, useState } from "react";
 
 const EditForm = () => {
-  const res = useAsyncValue() as any;
+  const res = useAsyncValue() as AxiosResponse<DecoratedPost>;
 
   const form = useForm({
     initialValues: {
@@ -37,48 +39,59 @@ const EditForm = () => {
   const pathnameParts = location.pathname.split("/");
   const postId = pathnameParts[pathnameParts.length - 1];
 
-  const handleEditPost = async (e: any) => {
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const handleEditPost = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      setIsUpdating(true);
       await axios.post(`${DOMAIN}/posts/edit/` + postId, form.values);
+      setIsUpdating(false);
       navigate("/posts/show/" + postId);
     } catch (err) {}
   };
   return (
-    <form onSubmit={handleEditPost}>
-      <TextInput
-        label="Title"
-        description="Title of post"
-        placeholder="Enter a title..."
-        required
-        {...form.getInputProps("title")}
-      />
-      <TextInput
-        label="subgroup"
-        description="subgroup of post"
-        placeholder="Enter the subgroup..."
-        required
-        {...form.getInputProps("subgroup")}
-      />
-      <TextInput
-        label="Link"
-        description="Link of post"
-        placeholder="Add a link..."
-        required
-        {...form.getInputProps("link")}
-      />
-      <Textarea
-        label="Content"
-        description="Content of post"
-        placeholder="Add content..."
-        autosize
-        required
-        {...form.getInputProps("content")}
-      />
-      <Button type="submit" mt="xl">
-        Edit Post
-      </Button>
-    </form>
+    <Box pos="relative">
+      <LoadingOverlay visible={isUpdating} zIndex={1000} />
+      <form onSubmit={handleEditPost}>
+        <TextInput
+          label="Title"
+          description="Title of post"
+          placeholder="Enter a title..."
+          disabled={isUpdating}
+          required
+          {...form.getInputProps("title")}
+        />
+        <TextInput
+          label="subgroup"
+          description="subgroup of post"
+          placeholder="Enter the subgroup..."
+          disabled={isUpdating}
+          required
+          {...form.getInputProps("subgroup")}
+        />
+        <TextInput
+          label="Link"
+          description="Link of post"
+          placeholder="Add a link..."
+          disabled={isUpdating}
+          required
+          {...form.getInputProps("link")}
+        />
+        <Textarea
+          label="Content"
+          description="Content of post"
+          placeholder="Add content..."
+          disabled={isUpdating}
+          autosize
+          required
+          {...form.getInputProps("content")}
+        />
+        <Button type="submit" mt="xl" disabled={isUpdating}>
+          Edit Post
+        </Button>
+      </form>
+    </Box>
   );
 };
 
@@ -102,8 +115,10 @@ const EditPostPage = () => {
   );
 };
 
-export const editPostLoader = ({ params }: { params: any }) => {
-  const resPromise = axios.get(`${DOMAIN}/posts/show/${params.id}`);
+export const editPostLoader = ({ params }: { params: { id: string } }) => {
+  const resPromise: Promise<AxiosResponse<DecoratedPost>> = axios.get(
+    `${DOMAIN}/posts/show/${params.id}`
+  );
   return defer({ res: resPromise });
 };
 

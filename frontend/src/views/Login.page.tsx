@@ -17,7 +17,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "@mantine/form";
 import { useUser } from "../store/store";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 
 const LoginPage = () => {
   const { setUsername, setUserId, setAuthenticated } = useUser();
@@ -36,7 +36,7 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
 
-  const handleLogin = async (e: any) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       setLoading(true);

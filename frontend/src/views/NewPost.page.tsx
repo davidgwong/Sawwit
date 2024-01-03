@@ -10,7 +10,7 @@ import axios from "axios";
 import DOMAIN from "../services/endpoint";
 import { useForm } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 
 const NewPostPage = () => {
   const form = useForm({
@@ -26,7 +26,7 @@ const NewPostPage = () => {
 
   const navigate = useNavigate();
 
-  const handleCreateNewPost = async (e: any) => {
+  const handleCreateNewPost = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       setLoading(true);

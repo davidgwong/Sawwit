@@ -93,7 +93,7 @@ const PostList = () => {
               ? "Showing posts from all subgroups"
               : `Showing posts from ${pathId} subgroup`}
           </Text>
-          {posts.map((post: any) => (
+          {posts.map((post) => (
             <PostCard
               post={post}
               key={post._id}

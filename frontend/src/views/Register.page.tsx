@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "@mantine/form";
 import DOMAIN from "../services/endpoint";
 import axios from "axios";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 
 const RegisterPage = () => {
   const form = useForm({
@@ -36,7 +36,7 @@ const RegisterPage = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const handleRegister = async (e: any) => {
+  const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       setLoading(true);

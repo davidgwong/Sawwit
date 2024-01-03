@@ -22,7 +22,7 @@ import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 const PostCard = ({
   post,
 }: {
-  post: any;
+  post: DecoratedPost;
 }) => {
   const { isAuthenticated, userId } = useUser();
   const [opened, { open, close }] = useDisclosure(false);

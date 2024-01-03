@@ -58,6 +58,22 @@ declare global {
     post_title: string;
     value: number;
   }
+
+  interface GetSubsData {
+    _id: string;
+    count: number;
+  }
 }
 
-export { User, Comment, DecoratedComment, Post, DecoratedPost, Vote, SessionData, Reply, DecoratedReply };
+export {
+  User,
+  Comment,
+  DecoratedComment,
+  Post,
+  DecoratedPost,
+  Vote,
+  SessionData,
+  Reply,
+  DecoratedReply,
+  GetSubsData,
+};

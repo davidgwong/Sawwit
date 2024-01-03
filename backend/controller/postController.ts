@@ -202,15 +202,17 @@ const deletePost = async (req: Request, res: Response) => {
 };
 
 const getSubs = async (req: Request, res: Response) => {
-  const subgroups = await Post.aggregate([
-    {
-      $group: {
-        _id: "$subgroup",
-        count: { $sum: 1 },
+  try {
+    const subgroups: GetSubsData[] = await Post.aggregate([
+      {
+        $group: {
+          _id: "$subgroup",
+          count: { $sum: 1 },
+        },
       },
-    },
-  ]);
-  res.status(200).json({ subgroups });
+    ]);
+    res.status(200).json({ subgroups });
+  } catch (err) {}
 };
 
 const addComment = async (req: Request, res: Response) => {

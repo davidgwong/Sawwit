@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import DOMAIN from "../services/endpoint";
 import {
   Title,
@@ -16,12 +16,7 @@ import {
   Box,
   LoadingOverlay,
 } from "@mantine/core";
-import {
-  Await,
-  defer,
-  useAsyncValue,
-  useLoaderData,
-} from "react-router-dom";
+import { Await, defer, useAsyncValue, useLoaderData } from "react-router-dom";
 import NotFound from "./NotFound.page";
 import { useForm } from "@mantine/form";
 import { useUser } from "../store/store";
@@ -30,12 +25,14 @@ import CommentCard from "../components/CommentCard";
 import { Suspense, useState } from "react";
 
 const IndividualPost = () => {
-  const res = useAsyncValue() as any;
-  const postId = res.data._id
+  const res = useAsyncValue() as AxiosResponse<DecoratedPost>;
+  const postId = res.data._id;
   if (!res.data) return <NotFound />;
   const { isAuthenticated } = useUser();
 
-  const [postComments, setPostComments] = useState(res.data.comments as Comment[]);
+  const [postComments, setPostComments] = useState(
+    res.data.comments as Comment[]
+  );
 
   const form = useForm({
     initialValues: {
@@ -53,7 +50,7 @@ const IndividualPost = () => {
         newComment: form.values.comment,
         postTitle: res.data.title,
       });
-      
+
       const comments = await axios.get(`${DOMAIN}/comments/`, {
         params: {
           postId: postId,
@@ -85,8 +82,12 @@ const IndividualPost = () => {
 
       <Divider my="sm" />
 
-      {postComments.map((comment: any) => (
-        <CommentCard key={comment._id} comment={comment} setPostComments={setPostComments} />
+      {postComments.map((comment) => (
+        <CommentCard
+          key={comment._id}
+          comment={comment}
+          setPostComments={setPostComments}
+        />
       ))}
 
       {isAuthenticated ? (
@@ -137,8 +138,10 @@ const IndividualPostPage = () => {
   );
 };
 
-export const individualPostLoader = ({ params }: { params: any }) => {
-  const resPromise = axios.get(`${DOMAIN}/posts/show/${params.id}`);
+export const individualPostLoader = ({ params }: { params: {id: string} }) => {
+  const resPromise: Promise<AxiosResponse<DecoratedPost>> = axios.get(
+    `${DOMAIN}/posts/show/${params.id}`
+  );
   return defer({ res: resPromise });
 };
 

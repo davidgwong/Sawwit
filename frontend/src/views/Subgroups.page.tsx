@@ -11,10 +11,10 @@ import {
 import { Suspense } from "react";
 
 const SubgroupsList = () => {
-  const res = useAsyncValue() as AxiosResponse;
+  const res = useAsyncValue() as AxiosResponse<{ subgroups: GetSubsData[] }>;
   const navigate = useNavigate();
 
-  return res.data.subgroups.map((subgroup: any) => (
+  return res.data.subgroups.map((subgroup) => (
     <Container key={subgroup._id}>
       <Anchor onClick={() => navigate("/subgroups/" + subgroup._id)}>
         subgroup.{subgroup._id} ({subgroup.count}{" "}
@@ -48,7 +48,8 @@ const SubgroupsPage = () => {
 };
 
 export const subgroupsLoader = () => {
-  const resPromise = axios.get(`${DOMAIN}/subgroups/list`);
+  const resPromise: Promise<AxiosResponse<{ subgroups: GetSubsData[] }>> =
+    axios.get(`${DOMAIN}/subgroups/list`);
   return defer({ res: resPromise });
 };
 
