@@ -3,24 +3,31 @@ import session from "express-session";
 import passport from "./middleware/passport";
 import cors from "cors";
 import mongoose from "mongoose";
+import MongoStore from 'connect-mongo'
 
 require("dotenv").config();
 const PORT = process.env.PORT!;
 const SECRET = process.env.SESSION_SECRET!;
 const DB_NAME = process.env.DB_NAME!;
 const DB_URI = process.env.MONGODB_URI!;
+const SESSION_DB_NAME = process.env.SESSION_DB_NAME!;
+const ORIGIN = process.env.ORIGIN!;
 
 const app = express();
-app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
+app.use(cors({ credentials: true, origin: ORIGIN }));
 app.use(
   session({
     secret: SECRET,
+    store: MongoStore.create({
+      mongoUrl: DB_URI,
+      dbName: SESSION_DB_NAME,
+    }),
     resave: true,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
       secure: false, // HTTPS Required
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
   })
 );
@@ -54,6 +61,6 @@ async function main() {
   await mongoose.connect(DB_URI, { dbName: DB_NAME });
   console.log("Connected to MongoDB");
   app.listen(PORT, () =>
-    console.log(`server should be running at http://localhost:${PORT}/`)
+    console.log(`server should be running at ${PORT}/`)
   );
 }
