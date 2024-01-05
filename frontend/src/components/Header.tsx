@@ -23,7 +23,7 @@ const loggedOutLinks = [
 ];
 
 export default function Header() {
-  const [opened, { toggle }] = useDisclosure(true);
+  const [opened, { toggle }] = useDisclosure(false);
 
   const {
     username,
