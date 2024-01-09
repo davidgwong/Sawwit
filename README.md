@@ -5,17 +5,21 @@ A full-stack web application for users to post, comment, and like. Inspired by a
 https://sawwit.glitch.me/
 
 ## Features
-1. User authentication - user authentication is done via `express-session` and `passport.js`. Users can log in with the login page
-2. User registration - new users can register in the registration page. For demonstration purposes, users will not need to verify their identity.
-3. Posting - users can make posts containing links and text to share with other uses.
-4. Commenting - users can comment on posts.
-5. Like - users can like or dislike posts with the `up` and `down` arrows.
-6. Sorting - users can sort posts based on the following:
-a. Top - sort based on the sum of likes to the sum of dislikes.
-b. Hot - sort based on the sum of likes.
-c. Controversial - sort based on how many likes and dislikes.
-d. Date - sort based on how recent the post was made.
-7. Deleting - users can delete their posts or comments.
+<ol>
+<li>User authentication - user authentication is done via <code>express-session</code> and <code>passport.js</code>. Users can log in with the login page</li>
+<li>User registration - new users can register in the registration page. For demonstration purposes, users will not need to verify their identity.</li>
+<li>Posting - users can make posts containing links and text to share with other uses.</li>
+<li>Commenting - users can comment on posts.</li>
+<li>Like - users can like or dislike posts with the <code>up</code> and <code>down</code> arrows.</li>
+<li>Sorting - users can sort posts based on the following:</li>
+<ol>
+  <li>Top - sort based on the sum of likes to the sum of dislikes.</li>
+  <li>Hot - sort based on the sum of likes.</li>
+  <li>Controversial - sort based on how many likes and dislikes.</li>
+  <li>Date - sort based on how recent the post was made.</li>
+</ol></li>
+<li>Deleting - users can delete their posts or comments.</li>
+</ol>
 
 ## Technologies and Libraries Used
 - MongoDB
