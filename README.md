@@ -31,3 +31,11 @@ https://sawwit.glitch.me/
 - Axios
 - Zustand
 - Vite
+
+## Further Improvements and Implementations
+- [ ] Liking comments
+- [ ] Replying comments
+- [ ] Add missing error handlings
+- [ ] Add missing typings
+- [ ] Profile page
+- [ ] Search function
